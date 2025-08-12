@@ -28,7 +28,7 @@ export default function ScheduleActions({ scheduleId, staffName, dayLabel }: Sch
       } else {
         alert('Mesai saati silinemedi')
       }
-    } catch (error) {
+    } catch {
       alert('Bir hata oluştu')
     } finally {
       setIsDeleting(false)

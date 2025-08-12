@@ -6,7 +6,7 @@ import AdminFoot from '@/components/AdminFoot'
 import StaffDeleteButton from '@/components/StaffDeleteButton'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import { User, Plus, Edit, Trash2, Clock, Calendar, Phone, Mail } from 'lucide-react'
+import { User, Plus, Edit, Clock, Calendar, Phone, Mail } from 'lucide-react'
 
 export default async function AdminStaff() {
   // Get session

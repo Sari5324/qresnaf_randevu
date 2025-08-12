@@ -6,7 +6,7 @@ import AdminNav from '@/components/AdminNav'
 import AdminFoot from '@/components/AdminFoot'
 import UserDeleteButton from '@/components/UserDeleteButton'
 import Link from 'next/link'
-import { Edit2, Trash2 } from 'lucide-react'
+import { Edit2 } from 'lucide-react'
 
 interface User {
   id: string

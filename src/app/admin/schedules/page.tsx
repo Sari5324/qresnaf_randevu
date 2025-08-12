@@ -5,7 +5,7 @@ import AdminFoot from '../../../components/AdminFoot'
 import ScheduleActions from '../../../components/ScheduleActions'
 import { prisma } from '../../../lib/prisma'
 import Link from 'next/link'
-import { Plus, Clock, Edit, Trash2 } from 'lucide-react'
+import { Plus, Clock, Edit } from 'lucide-react'
 
 const DAYS_OF_WEEK = [
   { key: 'MONDAY', label: 'Pazartesi' },

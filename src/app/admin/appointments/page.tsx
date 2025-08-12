@@ -13,7 +13,6 @@ import {
   Phone, 
   Plus,
   Edit,
-  Trash2,
   CheckCircle,
   XCircle,
   AlertCircle,

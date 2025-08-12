@@ -69,7 +69,10 @@ export default async function EditAppointmentPage({
           {/* Appointment Edit Form */}
           <div className="px-6 md:px-0">
             <AppointmentEditForm 
-              appointment={appointment}
+              appointment={{
+                ...appointment,
+                date: appointment.date.toISOString().split('T')[0]
+              }}
               staff={staff}
             />
           </div>

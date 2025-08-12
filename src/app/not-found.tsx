@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowLeft, Home } from 'lucide-react'
+import { Home } from 'lucide-react'
 import BackButton from '@/components/BackButton'
 
 export default function NotFound() {
