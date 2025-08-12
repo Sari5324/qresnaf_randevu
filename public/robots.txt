@@ -1,0 +1,27 @@
+# robots.txt - Sanal Menü Uygulaması
+# Allow all search engines to crawl public content
+
+User-agent: *
+
+# Allow public pages
+Allow: /
+Allow: /category/*
+Allow: /search
+
+# Block admin area and APIs
+Disallow: /admin
+Disallow: /api/
+Disallow: /admin/*
+
+# Block private uploads if any
+Disallow: /uploads/private/
+
+# Allow specific important files
+Allow: /logo.png
+Allow: /sitemap.xml
+
+# Crawl delay (be nice to servers)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: /sitemap.xml

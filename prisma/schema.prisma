@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Property {
+  id               String         @id @default(cuid())
+  title            String
+  description      String?
+  images           PropertyImage[]
+  video            String?        // YouTube link
+  price            Float
+  minOfferPrice    Float?
+  location         String
+  tags             PropertyTag[]
+  isFeatured       Boolean        @default(false)
+  order            Int            @default(0)
+  views            PropertyView[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model PropertyImage {
+  id         String   @id @default(cuid())
+  url        String
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+model PropertyTag {
+  id         String   @id @default(cuid())
+  name       String
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+}
+
+model SiteSettings {
+  id          String   @id @default(cuid())
+  companyName String   @default("Sanal Emlak")
+  companyLogo String?
+  description String?
+  themeColor  String  @default("#3B82F6")
+  themeFont   String  @default("inter")
+  darkMode    Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PropertyView {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  userAgent  String?
+  ipAddress  String?
+  location   String?
+  viewedAt   DateTime @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}

@@ -1,0 +1,201 @@
+import type { Viewport } from "next";
+import { Inter, Grenze_Gotisch, Gluten, Fredoka, Newsreader, Playwrite_US_Modern, Phudu, Playfair, Michroma, Advent_Pro } from "next/font/google";
+import { prisma } from "@/lib/prisma";
+import ThemeProvider from "@/components/ThemeProvider";
+import "./globals.css";
+
+const inter = Inter({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
+
+const grenze_gotisch = Grenze_Gotisch({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-grenze-gotisch',
+});
+
+const gluten = Gluten({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-gluten',
+});
+
+const fredoka = Fredoka({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-fredoka',
+});
+
+const newsreader = Newsreader({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-newsreader',
+});
+
+const playwrite_us_modern = Playwrite_US_Modern({
+  weight: '400',
+  variable: '--font-playwrite-us-modern',
+});
+
+const phudu = Phudu({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-phudu',
+});
+
+const playfair = Playfair({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-playfair',
+});
+
+const michroma = Michroma({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-michroma',
+});
+
+const advent_pro = Advent_Pro({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-advent-pro',
+});
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
+export const revalidate = 0 // Disable caching for theme updates
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  // Site ayarlarından tema rengini al - production'da cache problemi için revalidate
+  const siteSettings = await prisma.siteSettings.findFirst()
+  
+  // Theme color generation function
+  const generateColorScale = (color: string, darkMode: boolean = false) => {
+    // Parse hex color
+    const hex = color.replace('#', '')
+    const r = parseInt(hex.substring(0, 2), 16)
+    const g = parseInt(hex.substring(2, 4), 16)
+    const b = parseInt(hex.substring(4, 6), 16)
+
+    // Function to mix a color with white for lighter shades
+    const mixWithWhite = (r: number, g: number, b: number, mixRatio: number) => {
+      return {
+        r: Math.round(r + (255 - r) * mixRatio),
+        g: Math.round(g + (255 - g) * mixRatio),
+        b: Math.round(b + (255 - b) * mixRatio)
+      }
+    }
+
+    // Function to mix a color with black for darker shades
+    const mixWithBlack = (r: number, g: number, b: number, mixRatio: number) => {
+      return {
+        r: Math.round(r * (1 - mixRatio)),
+        g: Math.round(g * (1 - mixRatio)),
+        b: Math.round(b * (1 - mixRatio))
+      }
+    }
+
+    // Generate color scale
+    const colors50 = mixWithWhite(r, g, b, 0.95)   // Very light
+    const colors100 = mixWithWhite(r, g, b, 0.85)  // Light
+    const colors200 = mixWithWhite(r, g, b, 0.7)   // Lighter
+    const colors300 = mixWithWhite(r, g, b, 0.5)   // Light medium
+    const colors400 = mixWithWhite(r, g, b, 0.3)   // Medium light
+    const colors500 = { r, g, b }                   // Base color
+    const colors600 = mixWithBlack(r, g, b, 0.2)   // Medium dark
+    const colors700 = mixWithBlack(r, g, b, 0.4)   // Dark medium
+    const colors800 = mixWithBlack(r, g, b, 0.6)   // Darker
+    const colors900 = mixWithBlack(r, g, b, 0.8)   // Very dark
+    const colors950 = mixWithBlack(r, g, b, 0.9)   // Darkest
+
+    // Normal color scale
+    const normalColors = {
+      '--color-primary-50': `rgb(${colors50.r}, ${colors50.g}, ${colors50.b})`,
+      '--color-primary-100': `rgb(${colors100.r}, ${colors100.g}, ${colors100.b})`,
+      '--color-primary-200': `rgb(${colors200.r}, ${colors200.g}, ${colors200.b})`,
+      '--color-primary-300': `rgb(${colors300.r}, ${colors300.g}, ${colors300.b})`,
+      '--color-primary-400': `rgb(${colors400.r}, ${colors400.g}, ${colors400.b})`,
+      '--color-primary-500': `rgb(${colors500.r}, ${colors500.g}, ${colors500.b})`,
+      '--color-primary-600': `rgb(${colors600.r}, ${colors600.g}, ${colors600.b})`,
+      '--color-primary-700': `rgb(${colors700.r}, ${colors700.g}, ${colors700.b})`,
+      '--color-primary-800': `rgb(${colors800.r}, ${colors800.g}, ${colors800.b})`,
+      '--color-primary-900': `rgb(${colors900.r}, ${colors900.g}, ${colors900.b})`,
+      '--color-primary-950': `rgb(${colors950.r}, ${colors950.g}, ${colors950.b})`,
+    }
+
+    // Dark mode'da renkleri tersine çevir
+    if (darkMode) {
+      return {
+        '--color-primary-50': normalColors['--color-primary-950'],
+        '--color-primary-100': normalColors['--color-primary-900'],
+        '--color-primary-200': normalColors['--color-primary-800'],
+        '--color-primary-300': normalColors['--color-primary-700'],
+        '--color-primary-400': normalColors['--color-primary-600'],
+        '--color-primary-500': normalColors['--color-primary-500'],
+        '--color-primary-600': normalColors['--color-primary-400'],
+        '--color-primary-700': normalColors['--color-primary-300'],
+        '--color-primary-800': normalColors['--color-primary-200'],
+        '--color-primary-900': normalColors['--color-primary-100'],
+        '--color-primary-950': normalColors['--color-primary-50'],
+      }
+    }
+
+    return normalColors
+  }
+
+  // Path kontrolü ile admin sayfası olup olmadığını belirle
+  const { headers } = await import('next/headers')
+  const headersList = await headers()
+  const pathname = headersList.get('x-pathname') || ''
+  const isAdminPage = pathname.startsWith('/admin')
+
+  // Dark mode sadece belirli sayfalarda aktif
+  const isDarkModeEnabled = Boolean((siteSettings as { darkMode?: boolean })?.darkMode) && !isAdminPage
+  
+  const themeStyles = generateColorScale(siteSettings?.themeColor || '#3B82F6', isDarkModeEnabled)
+  
+  // Font class mapping - admin sayfaları için özel kontrol
+  const getFontClass = (fontName: string, isAdminPage: boolean = false) => {
+    // Admin sayfalarında her zaman Inter font kullan
+    if (isAdminPage) {
+      return 'font-sans'
+    }
+    
+    const fontMap: Record<string, string> = {
+      'inter': 'font-sans',
+      'grenze-gotisch': 'font-grenze-gotisch',
+      'gluten': 'font-gluten',
+      'fredoka': 'font-fredoka',
+      'newsreader': 'font-newsreader',
+      'playwrite-us-modern': 'font-playwrite-us-modern',
+      'phudu': 'font-phudu',
+      'playfair': 'font-playfair',
+      'michroma': 'font-michroma',
+      'advent-pro': 'font-advent-pro'
+    }
+    return fontMap[fontName] || 'font-sans'
+  }
+
+  const selectedFontClass = getFontClass(siteSettings?.themeFont || 'inter', isAdminPage)
+  
+  return (
+    <html lang="tr" style={themeStyles as React.CSSProperties}>
+      <body
+        className={`${inter.variable} ${gluten.variable} ${fredoka.variable} ${grenze_gotisch.variable} ${newsreader.variable} ${playwrite_us_modern.variable} ${phudu.variable} ${playfair.variable} ${michroma.variable} ${advent_pro.variable} ${selectedFontClass}`}
+      >
+        <ThemeProvider >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
