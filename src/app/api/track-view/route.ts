@@ -3,11 +3,9 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
-    const { propertyId } = await request.json()
+    const { appointmentId } = await request.json()
 
-    if (!propertyId) {
-      return NextResponse.json({ error: 'İlan ID gereklidir' }, { status: 400 })
-    }
+    // appointmentId can be null for homepage views
 
     // Get user location from headers (approximate)
     const forwarded = request.headers.get('x-forwarded-for')
@@ -44,17 +42,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Record the view
-    if (propertyId) {
-      await prisma.propertyView.create({
-        data: {
-          propertyId,
-          location,
-          ipAddress: ip !== 'unknown' ? ip : null,
-          userAgent: userAgent || null,
-          viewedAt: new Date()
-        }
-      })
-    }
+    await prisma.appointmentView.create({
+      data: {
+        appointmentId: appointmentId || null,
+        location,
+        ipAddress: ip !== 'unknown' ? ip : null,
+        userAgent: userAgent || null,
+        viewedAt: new Date()
+      }
+    })
 
     return NextResponse.json({ success: true })
   } catch (error) {

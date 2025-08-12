@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   // Pathname'i header'a ekle
   response.headers.set('x-pathname', request.nextUrl.pathname)
   
-  // Protect admin routes
+  // Protect admin routes for appointment system
   if (request.nextUrl.pathname.startsWith('/admin')) {
     // Skip middleware for login page
     if (request.nextUrl.pathname === '/admin/login') {

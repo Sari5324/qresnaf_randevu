@@ -20,63 +20,104 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Property {
-  id               String         @id @default(cuid())
-  title            String
-  description      String?
-  images           PropertyImage[]
-  video            String?        // YouTube link
-  price            Float
-  minOfferPrice    Float?
-  location         String
-  tags             PropertyTag[]
-  isFeatured       Boolean        @default(false)
-  order            Int            @default(0)
-  views            PropertyView[]
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+model Staff {
+  id           String        @id @default(cuid())
+  name         String
+  email        String?
+  phone        String?
+  title        String?
+  order        Int           @default(0)
+  workSchedule WorkSchedule[]
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
-model PropertyImage {
-  id         String   @id @default(cuid())
-  url        String
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  order      Int      @default(0)
-  createdAt  DateTime @default(now())
+model WorkSchedule {
+  id          String    @id @default(cuid())
+  staffId     String
+  staff       Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  dayOfWeek   DayOfWeek
+  isWorking   Boolean   @default(true)
+  startTime   String?   // Format: "09:00"
+  endTime     String?   // Format: "17:00"
+  interval    Int?      @default(30) // Minutes
+  breakStart  String?   // Format: "12:00"
+  breakEnd    String?   // Format: "13:00"
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([staffId, dayOfWeek])
 }
 
-model PropertyTag {
-  id         String   @id @default(cuid())
-  name       String
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
+model Appointment {
+  id          String            @id @default(cuid())
+  code        String            @unique // 6-digit code
+  customerName String
+  customerPhone String
+  staffId     String
+  staff       Staff             @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  date        DateTime
+  time        String            // Format: "09:00"
+  status      AppointmentStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([date, time, staffId])
+  @@index([customerPhone])
 }
 
-model SiteSettings {
+model SliderImage {
   id          String   @id @default(cuid())
-  companyName String   @default("Sanal Emlak")
-  companyLogo String?
+  name        String
+  url         String
   description String?
-  themeColor  String  @default("#3B82F6")
-  themeFont   String  @default("inter")
-  darkMode    Boolean @default(false)
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-model PropertyView {
-  id         String   @id @default(cuid())
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  userAgent  String?
-  ipAddress  String?
-  location   String?
-  viewedAt   DateTime @default(now())
+model SiteSettings {
+  id          String   @id @default(cuid())
+  companyName String   @default("Sanal Randevu")
+  companyLogo String?
+  description String?
+  themeColor  String   @default("#3B82F6")
+  themeFont   String   @default("inter")
+  darkMode    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AppointmentView {
+  id            String   @id @default(cuid())
+  appointmentId String?
+  userAgent     String?
+  ipAddress     String?
+  location      String?
+  viewedAt      DateTime @default(now())
 }
 
 enum Role {
   USER
   ADMIN
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
 }

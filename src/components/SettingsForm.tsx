@@ -46,7 +46,8 @@ export default function SettingsForm({ settings }: SettingsFormProps) {
       })
     }
   }, [settings])
-  const handleFileSelect = (file: File | null) => {
+  const handleFileSelect = (files: File | File[] | null) => {
+    const file = Array.isArray(files) ? files[0] : files
     // Clean up previous preview URL
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl)

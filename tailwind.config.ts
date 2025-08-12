@@ -22,6 +22,9 @@ export default {
           950: 'var(--color-primary-950)',
         }
       },
+      borderWidth: {
+        '3': '3px',
+      },
       fontFamily: {
         'grenze-gotisch': 'var(--font-grenze-gotisch)',
         'gluten': 'var(--font-gluten)',

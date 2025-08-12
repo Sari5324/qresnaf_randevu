@@ -4,19 +4,19 @@ import Image from 'next/image'
 import { useState, useRef } from 'react'
 import { ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react'
 
-interface PropertyImage {
+interface SliderImage {
   id: string
+  name: string
   url: string
+  description?: string | null
   order: number
 }
 
 interface ImageSliderProps {
-  images: PropertyImage[]
-  title: string
-  isFeatured?: boolean
+  images: SliderImage[]
 }
 
-export default function ImageSlider({ images, title, isFeatured }: ImageSliderProps) {
+export default function ImageSlider({ images }: ImageSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -110,7 +110,7 @@ export default function ImageSlider({ images, title, isFeatured }: ImageSliderPr
 
   if (images.length === 0) {
     return (
-      <div className="aspect-square bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+      <div className="aspect-video bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center rounded-xl">
         <div className="w-24 h-24 text-white/50">
           <ImageIcon className="w-24 h-24"/>
         </div>
@@ -121,7 +121,7 @@ export default function ImageSlider({ images, title, isFeatured }: ImageSliderPr
   return (
     <div 
       ref={sliderRef}
-      className="aspect-square relative bg-primary-100 overflow-hidden select-none"
+      className="aspect-video relative bg-gray-100 overflow-hidden select-none rounded-xl shadow-lg"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -149,12 +149,19 @@ export default function ImageSlider({ images, title, isFeatured }: ImageSliderPr
           >
             <Image
               src={image.url}
-              alt={title}
+              alt={image.name}
               fill
               priority={index === 0}
               className="object-cover pointer-events-none"
               draggable={false}
             />
+            {/* Text Overlay */}
+            {image.description && (
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                <h3 className="text-white font-bold text-xl mb-1">{image.name}</h3>
+                <p className="text-white/90 text-sm">{image.description}</p>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -186,12 +193,7 @@ export default function ImageSlider({ images, title, isFeatured }: ImageSliderPr
         </div>
       )}
 
-      {/* Featured Badge */}
-      {isFeatured && (
-        <div className="absolute top-2 left-2 bg-primary-600 text-primary-50 px-2 py-1 rounded-xl text-xs font-bold animate-pulse">
-          ÖNE ÇIKAN
-        </div>
-      )}
+
 
       {/* Dots Indicator */}
       {images.length > 1 && (

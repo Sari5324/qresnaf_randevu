@@ -19,7 +19,7 @@ export async function DELETE(request: NextRequest) {
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-    const deletedRecords = await prisma.categoryView.deleteMany({
+    const deletedRecords = await prisma.appointmentView.deleteMany({
       where: {
         viewedAt: {
           lt: thirtyDaysAgo
@@ -55,14 +55,14 @@ export async function GET(request: NextRequest) {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
     const [oldRecordsCount, totalRecordsCount] = await Promise.all([
-      prisma.categoryView.count({
+      prisma.appointmentView.count({
         where: {
           viewedAt: {
             lt: thirtyDaysAgo
           }
         }
       }),
-      prisma.categoryView.count()
+      prisma.appointmentView.count()
     ])
 
     return NextResponse.json({

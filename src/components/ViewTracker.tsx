@@ -3,10 +3,10 @@
 import { useEffect, useRef } from 'react'
 
 interface ViewTrackerProps {
-  propertyId: string
+  appointmentId: string | null
 }
 
-export default function ViewTracker({ propertyId }: ViewTrackerProps) {
+export default function ViewTracker({ appointmentId }: ViewTrackerProps) {
   const trackedRef = useRef<Set<string>>(new Set())
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -16,8 +16,7 @@ export default function ViewTracker({ propertyId }: ViewTrackerProps) {
       clearTimeout(timeoutRef.current)
     }
     
-    const trackingId = propertyId
-    if (!trackingId) return
+    const trackingId = appointmentId || 'homepage'
     
     // Check if this item was already tracked in this session
     if (trackedRef.current.has(trackingId)) {
@@ -36,7 +35,7 @@ export default function ViewTracker({ propertyId }: ViewTrackerProps) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ 
-            propertyId: propertyId || null
+            appointmentId: appointmentId || null
           }),
         })
       } catch (error) {
@@ -52,7 +51,7 @@ export default function ViewTracker({ propertyId }: ViewTrackerProps) {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [propertyId])
+  }, [appointmentId])
 
   return null // This component doesn't render anything
 }

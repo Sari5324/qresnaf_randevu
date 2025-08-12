@@ -7,7 +7,7 @@ export default function AnalyticsCleanup() {
   const [message, setMessage] = useState('')
 
   const handleCleanup = async () => {
-    if (!confirm('30 günden eski analiz verilerini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
+    if (!confirm('30 günden eski randevu analiz verilerini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
       return
     }
 

@@ -5,7 +5,7 @@ import AdminNav from '@/components/AdminNav'
 import AdminFoot from '@/components/AdminFoot'
 import AnalyticsCleanup from '@/components/AnalyticsCleanup'
 import { prisma } from '@/lib/prisma'
-import { Calendar, MapPin, Eye, TrendingUp } from 'lucide-react'
+import { Calendar, MapPin, Eye, TrendingUp, Users } from 'lucide-react'
 
 export default async function AnalyticsPage() {
   // Get session
@@ -27,7 +27,7 @@ export default async function AnalyticsPage() {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
     
     // Delete old records silently in background
-    prisma.categoryView.deleteMany({
+    prisma.appointmentView.deleteMany({
       where: {
         viewedAt: {
           lt: thirtyDaysAgo
@@ -46,17 +46,19 @@ export default async function AnalyticsPage() {
 
   // Get analytics data
   const [
-    totalViews,
+    ,// totalViews - not used in display but kept for future use
     todayViews,
     last30DaysViews,
     locationViews,
-    topCategories
+    appointmentStats,
+    todayAppointments,
+    last30DaysAppointments
   ] = await Promise.all([
     // Total views
-    prisma.categoryView.count(),
+    prisma.appointmentView.count(),
     
     // Today views
-    prisma.categoryView.count({
+    prisma.appointmentView.count({
       where: {
         viewedAt: {
           gte: today
@@ -65,7 +67,7 @@ export default async function AnalyticsPage() {
     }),
     
     // Last 30 days views
-    prisma.categoryView.count({
+    prisma.appointmentView.count({
       where: {
         viewedAt: {
           gte: thirtyDaysAgo
@@ -74,7 +76,7 @@ export default async function AnalyticsPage() {
     }),
     
     // Location views
-    prisma.categoryView.groupBy({
+    prisma.appointmentView.groupBy({
       by: ['location'],
       _count: {
         id: true
@@ -91,32 +93,77 @@ export default async function AnalyticsPage() {
       }
     }),
     
-    // Top categories with names
-    prisma.category.findMany({
-      include: {
-        _count: {
-          select: { analytics: true }
+    // Appointment statistics by status
+    prisma.appointment.groupBy({
+      by: ['status'],
+      _count: true
+    }),
+
+    // Today appointments
+    prisma.appointment.count({
+      where: {
+        createdAt: {
+          gte: today
         }
-      },
-      orderBy: {
-        analytics: {
-          _count: 'desc'
+      }
+    }),
+
+    // Last 30 days appointments
+    prisma.appointment.count({
+      where: {
+        createdAt: {
+          gte: thirtyDaysAgo
         }
-      },
-      take: 10
+      }
     })
   ])
 
   // Get recent views for timeline
-  const recentViews = await prisma.categoryView.findMany({
+  const recentViews = await prisma.appointmentView.findMany({
     take: 20,
-    orderBy: { viewedAt: 'desc' },
+    orderBy: { viewedAt: 'desc' }
+  })
+
+  // Get recent appointments
+  const recentAppointments = await prisma.appointment.findMany({
+    take: 10,
+    orderBy: { createdAt: 'desc' },
     include: {
-      category: {
+      staff: {
         select: { name: true }
       }
     }
   })
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'PENDING':
+        return 'Bekliyor'
+      case 'CONFIRMED':
+        return 'Onaylandı'
+      case 'CANCELLED':
+        return 'İptal Edildi'
+      case 'COMPLETED':
+        return 'Tamamlandı'
+      default:
+        return status
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'PENDING':
+        return 'bg-yellow-100 text-yellow-600'
+      case 'CONFIRMED':
+        return 'bg-green-100 text-green-600'
+      case 'CANCELLED':
+        return 'bg-red-100 text-red-600'
+      case 'COMPLETED':
+        return 'bg-blue-100 text-blue-600'
+      default:
+        return 'bg-gray-100 text-gray-600'
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -129,7 +176,7 @@ export default async function AnalyticsPage() {
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Analizler</h1>
                 <p className="mt-1 text-sm text-gray-500">
-                  Kategori görüntüleme istatistikleri ve kullanıcı analizleri
+                  Randevu ve site görüntüleme istatistikleri
                 </p>
               </div>
               <div>
@@ -140,50 +187,8 @@ export default async function AnalyticsPage() {
 
           {/* Stats Cards */}
           <div className="px-6 md:px-0 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {/* Today Views */}
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <Calendar className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">
-                          Bugün
-                        </dt>
-                        <dd className="text-lg font-medium text-gray-900">
-                          {todayViews} görüntüleme
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Last 30 Days */}
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <TrendingUp className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">
-                          Son 30 Gün
-                        </dt>
-                        <dd className="text-lg font-medium text-gray-900">
-                          {last30DaysViews} görüntüleme
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Total Views */}
               <div className="bg-white overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
@@ -193,10 +198,73 @@ export default async function AnalyticsPage() {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">
-                          Toplam
+                          Bugün Görüntüleme
                         </dt>
                         <dd className="text-lg font-medium text-gray-900">
-                          {totalViews} görüntüleme
+                          {todayViews}
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Today Appointments */}
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <Calendar className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">
+                          Bugün Randevu
+                        </dt>
+                        <dd className="text-lg font-medium text-gray-900">
+                          {todayAppointments}
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Last 30 Days Views */}
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <TrendingUp className="h-6 w-6 text-purple-600" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">
+                          30 Gün Görüntüleme
+                        </dt>
+                        <dd className="text-lg font-medium text-gray-900">
+                          {last30DaysViews}
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Last 30 Days Appointments */}
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <Users className="h-6 w-6 text-orange-600" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">
+                          30 Gün Randevu
+                        </dt>
+                        <dd className="text-lg font-medium text-gray-900">
+                          {last30DaysAppointments}
                         </dd>
                       </dl>
                     </div>
@@ -207,28 +275,28 @@ export default async function AnalyticsPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-6 md:px-0">
-            {/* Top Categories */}
+            {/* Appointment Status Statistics */}
             <div className="bg-white shadow rounded-lg">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">En Çok Görüntülenen Kategoriler</h3>
+                <h3 className="text-lg font-medium text-gray-900">Randevu Durumları</h3>
               </div>
               <div className="p-6">
-                {topCategories.length > 0 ? (
+                {appointmentStats.length > 0 ? (
                   <div className="space-y-4">
-                    {topCategories.map((category, index) => (
-                      <div key={category.id} className="flex items-center justify-between">
+                    {appointmentStats.map((stat) => (
+                      <div key={stat.status} className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-medium text-sm mr-3">
-                            {index + 1}
-                          </div>
-                          <span className="text-sm font-medium text-gray-900">{category.name}</span>
+                          <div className={`w-4 h-4 rounded-full mr-3 ${getStatusColor(stat.status)}`}></div>
+                          <span className="text-sm font-medium text-gray-900">
+                            {getStatusText(stat.status)}
+                          </span>
                         </div>
-                        <span className="text-sm text-gray-500">{category._count.analytics} görüntüleme</span>
+                        <span className="text-sm text-gray-500">{stat._count} randevu</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-8">Henüz görüntüleme verisi yok</p>
+                  <p className="text-gray-500 text-center py-8">Henüz randevu verisi yok</p>
                 )}
               </div>
             </div>
@@ -237,13 +305,14 @@ export default async function AnalyticsPage() {
             <div className="bg-white shadow rounded-lg">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                  <MapPin className="w-5 h-5 mr-2" />
                   Konum Bazlı Görüntülemeler
                 </h3>
               </div>
               <div className="p-6">
                 {locationViews.length > 0 ? (
                   <div className="space-y-4">
-                    {locationViews.slice(0, 10).map((location, index) => (
+                    {locationViews.slice(0, 8).map((location, index) => (
                       <div key={location.location} className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-medium text-sm mr-3">
@@ -263,57 +332,74 @@ export default async function AnalyticsPage() {
               </div>
             </div>
 
-            {/* Recent Activity */}
-            <div className="bg-white shadow rounded-lg lg:col-span-2">
+            {/* Recent Appointments */}
+            <div className="bg-white shadow rounded-lg">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">Son Aktiviteler</h3>
+                <h3 className="text-lg font-medium text-gray-900">Son Randevular</h3>
+              </div>
+              <div className="p-6">
+                {recentAppointments.length > 0 ? (
+                  <div className="space-y-4">
+                    {recentAppointments.map((appointment) => (
+                      <div key={appointment.id} className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {appointment.customerName}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {appointment.staff.name} - {appointment.time}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(appointment.status)}`}>
+                            {getStatusText(appointment.status)}
+                          </span>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(appointment.createdAt).toLocaleDateString('tr-TR')}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-8">Henüz randevu verisi yok</p>
+                )}
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-white shadow rounded-lg">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900">Son Site Ziyaretleri</h3>
               </div>
               <div className="p-6">
                 {recentViews.length > 0 ? (
-                  <div className="flow-root">
-                    <ul className="-mb-8">
-                      {recentViews.map((view, index) => (
-                        <li key={view.id}>
-                          <div className="relative pb-8">
-                            {index !== recentViews.length - 1 && (
-                              <span
-                                className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                                aria-hidden="true"
-                              />
+                  <div className="space-y-4">
+                    {recentViews.slice(0, 8).map((view) => (
+                      <div key={view.id} className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <Eye className="w-4 h-4 text-blue-500 mr-3" />
+                          <div>
+                            <p className="text-sm text-gray-500">
+                              {view.appointmentId ? 'Randevu görüntülendi' : 'Ana sayfa ziyareti'}
+                            </p>
+                            {view.location && (
+                              <p className="text-xs text-gray-400">
+                                {view.location}
+                              </p>
                             )}
-                            <div className="relative flex space-x-3">
-                              <div>
-                                <span className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
-                                  <Eye className="h-4 w-4 text-white" />
-                                </span>
-                              </div>
-                              <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                                <div>
-                                  <p className="text-sm text-gray-500">
-                                    <span className="font-medium text-gray-900">{view.category.name}</span> kategorisi görüntülendi
-                                  </p>
-                                  {view.location && (
-                                    <p className="text-xs text-gray-400 mt-1">
-                                      <MapPin className="w-3 h-3 inline mr-1" />
-                                      {view.location}
-                                    </p>
-                                  )}
-                                </div>
-                                <div className="text-right text-sm whitespace-nowrap text-gray-500">
-                                  {new Date(view.viewedAt).toLocaleDateString('tr-TR', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
-                                </div>
-                              </div>
-                            </div>
                           </div>
-                        </li>
-                      ))}
-                    </ul>
+                        </div>
+                        <div className="text-right text-xs text-gray-500">
+                          {new Date(view.viewedAt).toLocaleDateString('tr-TR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <p className="text-gray-500 text-center py-8">Henüz aktivite verisi yok</p>

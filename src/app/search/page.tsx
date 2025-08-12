@@ -1,9 +1,9 @@
 import { prisma } from '@/lib/prisma'
-import SearchClient from '@/components/SearchClient'
+import AppointmentSearchClient from '@/components/AppointmentSearchClient'
 
 export const revalidate = 0
 
-export default async function SearchPage() {
+export default async function AppointmentSearchPage() {
   // Get site settings
   const siteSettings = await prisma.siteSettings.findFirst()
 
@@ -14,7 +14,7 @@ export default async function SearchPage() {
       } as React.CSSProperties}
       className={`${siteSettings?.themeFont || 'inter'} ${siteSettings?.darkMode ? 'dark' : ''}`}
     >
-      <SearchClient />
+      <AppointmentSearchClient />
     </div>
   )
 }

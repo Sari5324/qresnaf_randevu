@@ -5,7 +5,7 @@ import AdminNav from '@/components/AdminNav'
 import AdminFoot from '@/components/AdminFoot'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import { ChartNoAxesCombined, Settings, Users, Home } from 'lucide-react'
+import { ChartNoAxesCombined, Settings, Users, Calendar, UserCheck, Images, Clock } from 'lucide-react'
 
 export default async function AdminDashboard() {
   // Get session
@@ -46,7 +46,60 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Analizler</h3>
+                    <p className="text-gray-600 text-sm mb-4">Randevu ve ziyaret istatistikleri</p>
                     <Link href="/admin/analytics" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
+                        Görüntüle
+                    </Link>
+                </div>
+
+                <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-green-100 rounded-lg">
+                            <Calendar className="w-6 h-6 text-green-600"/>
+                        </div>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Randevular</h3>
+                    <p className="text-gray-600 text-sm mb-4">Randevu yönetimi ve takvibi</p>
+                    <Link href="/admin/appointments" className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
+                        Görüntüle
+                    </Link>
+                </div>
+
+                <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-purple-100 rounded-lg">
+                            <UserCheck className="w-6 h-6 text-purple-600"/>
+                        </div>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Personel</h3>
+                    <p className="text-gray-600 text-sm mb-4">Çalışan personel yönetimi</p>
+                    <Link href="/admin/staff" className="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
+                        Görüntüle
+                    </Link>
+                </div>
+
+                <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-orange-100 rounded-lg">
+                            <Clock className="w-6 h-6 text-orange-600"/>
+                        </div>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Mesai Saatleri</h3>
+                    <p className="text-gray-600 text-sm mb-4">Çalışma saatleri düzenleme</p>
+                    <Link href="/admin/schedules" className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
+                        Görüntüle
+                    </Link>
+                </div>
+
+                <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-pink-100 rounded-lg">
+                            <Images className="w-6 h-6 text-pink-600"/>
+                        </div>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Slider Görselleri</h3>
+                    <p className="text-gray-600 text-sm mb-4">Ana sayfa slider yönetimi</p>
+                    <Link href="/admin/slider" className="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
                 </div>
@@ -58,6 +111,7 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Site Ayarları</h3>
+                    <p className="text-gray-600 text-sm mb-4">Tema ve site düzenlemeleri</p>
                     <Link href="/admin/settings" className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
@@ -70,19 +124,8 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Kullanıcılar</h3>
+                    <p className="text-gray-600 text-sm mb-4">Yönetici kullanıcı yönetimi</p>
                     <Link href="/admin/users" className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
-                        Görüntüle
-                    </Link>
-                </div>
-
-                <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="p-3 bg-green-100 rounded-lg">
-                            <Home className="w-6 h-6 text-green-600" />
-                        </div>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">İlanlar</h3>
-                    <Link href="/admin/properties" className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
                 </div>
