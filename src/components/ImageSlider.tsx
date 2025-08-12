@@ -110,10 +110,16 @@ export default function ImageSlider({ images, title, isFeatured }: ImageSliderPr
 
   if (images.length === 0) {
     return (
-      <div className="aspect-square bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
-        <div className="w-24 h-24 text-white/50">
+      <div className="aspect-square bg-gradient-to-br from-primary-200 to-primary-400 flex items-center justify-center relative">
+        <div className="w-24 h-24 text-primary-500">
           <ImageIcon className="w-24 h-24"/>
         </div>
+        {/* Featured Badge for empty images */}
+        {isFeatured && (
+          <div className="absolute top-2 left-2 bg-primary-600 text-primary-50 px-2 py-1 rounded-xl text-xs font-bold animate-pulse">
+            ÖNE ÇIKAN
+          </div>
+        )}
       </div>
     )
   }

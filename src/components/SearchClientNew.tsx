@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, Search, Home, Loader2, MapPin } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { getDisplayLocation } from '../lib/geocoding'
 
 interface Property {
   id: string
@@ -195,13 +196,13 @@ export default function SearchClient({ propertyCardEnabled }: SearchClientProps)
                       <h3 className="font-bold text-primary-800 text-sm mb-1 line-clamp-2">
                         {property.title}
                       </h3>
-                      <div className="flex items-center gap-1 text-gray-500 text-xs mb-2">
+                      <div className="flex items-center gap-1 text-primary-500 text-xs mb-2">
                         <MapPin className="w-3 h-3" />
-                        {property.location}
+                        {getDisplayLocation(property.location)}
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="font-bold text-primary-700 text-lg">
-                          ₺{property.price.toLocaleString('tr-TR')}
+                          {property.price.toLocaleString('tr-TR')}₺
                         </span>
                       </div>
                     </div>

@@ -156,8 +156,9 @@ export async function PUT(
           order: parseInt(order),
           isFeatured: Boolean(isFeatured),
           tags: tags && tags.length > 0 ? {
-            create: tags.map((tag: string) => ({
-              name: tag.trim()
+            create: tags.map((tag: any) => ({
+              name: typeof tag === 'string' ? tag.trim() : tag.name.trim(),
+              icon: typeof tag === 'object' && tag.icon ? tag.icon : null
             }))
           } : undefined
         }

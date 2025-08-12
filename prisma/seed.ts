@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client'
-import { hashPassword } from '@/lib/auth'
+import { hash } from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
   console.log('🌱 Starting seed...')
 
-  // Create default admin user
-  const adminPassword = await hashPassword('admin123')
+  // Create admin user
+  const hashedPassword = await hash('admin123', 12)
   
   const admin = await prisma.user.upsert({
     where: { email: 'hizmet@qresnaf.com' },
@@ -15,7 +15,7 @@ async function main() {
     create: {
       username: 'admin',
       email: 'hizmet@qresnaf.com',
-      password: adminPassword,
+      password: hashedPassword,
       role: 'ADMIN',
     },
   })
@@ -32,86 +32,37 @@ async function main() {
       themeColor: '#3B82F6',
       themeFont: 'inter',
       darkMode: false,
-      propertyCard: true,
     },
   })
 
   console.log('⚙️ Created site settings:', { id: siteSettings.id, companyName: siteSettings.companyName })
 
-  // Create sample categories
-  const categories = await Promise.all([
-    prisma.category.upsert({
-      where: { id: '1' },
-      update: {},
-      create: {
-        name: 'Satılık Ev',
-        description: 'Satılık ev ve daire ilanları',
-        order: 1,
-      },
-    }),
-    prisma.category.upsert({
-      where: { id: '2' },
-      update: {},
-      create: {
-        name: 'Kiralık Ev',
-        description: 'Kiralık ev ve daire ilanları',
-        order: 2,
-      },
-    }),
-    prisma.category.upsert({
-      where: { id: '3' },
-      update: {},
-      create: {
-        name: 'Satılık Arsa',
-        description: 'Satılık arsa ve tarla ilanları',
-        order: 3,
-      },
-    }),
-    prisma.category.upsert({
-      where: { id: '4' },
-      update: {},
-      create: {
-        name: 'Ticari',
-        description: 'Satılık ve kiralık ticari gayrimenkuller',
-        order: 4,
-      },
-    }),
-  ])
-
-  console.log('📁 Created categories:', categories.map(c => c.name))
-
   // Create sample properties
   const properties = await Promise.all([
-    // Satılık Ev
     prisma.property.upsert({
       where: { id: '1' },
       update: {},
       create: {
-        title: 'Merkez\'de Satılık 3+1 Daire',
-        description: 'Şehir merkezinde, metro ve otobüs duraklarına yakın, 3+1 daire. Geniş balkon, otopark ve güvenlik mevcut. Modern mutfak ve banyo, parke zemin.',
+        title: 'Satılık Müstakil Ev',
+        description: 'Bahçeli, üç katlı müstakil ev. Merkezi konumda, ulaşım kolay.',
         price: 850000,
-        minOfferPrice: 800000,
-        location: 'Ankara/Çankaya',
-        isFeatured: true,
+        minOfferPrice: 750000,
+        location: 'İstanbul/Kadıköy',
         order: 1,
-        categoryId: categories[0].id,
+        isFeatured: true,
       },
     }),
     prisma.property.upsert({
       where: { id: '2' },
       update: {},
       create: {
-        title: 'Bahçeli Villa Satılık',
-        description: 'Müstakil villa, geniş bahçe, havuz, 4+1, sauna ve spor salonu mevcut. Doğa ile iç içe huzurlu yaşam.',
+        title: 'Satılık Villa',
+        description: 'Deniz manzaralı, havuzlu villa. Lüks yaşam alanları.',
         price: 2500000,
-        minOfferPrice: 2300000,
-        location: 'İstanbul/Sarıyer',
-        isFeatured: true,
+        location: 'Antalya/Kaş',
         order: 2,
-        categoryId: categories[0].id,
       },
     }),
-    // Kiralık Ev  
     prisma.property.upsert({
       where: { id: '3' },
       update: {},
@@ -120,8 +71,7 @@ async function main() {
         description: 'Yeni yapılmış, eşyalı, 2+1 daire. Tüm beyaz eşyalar dahil. Klima, çamaşır makinesi mevcut.',
         price: 8500,
         location: 'İzmir/Bornova',
-        order: 1,
-        categoryId: categories[1].id,
+        order: 3,
       },
     }),
     prisma.property.upsert({
@@ -132,11 +82,9 @@ async function main() {
         description: 'Sahil kenarında, deniz manzaralı 3+1 daire. Balkon, kapalı otopark ve güvenlik mevcut.',
         price: 15000,
         location: 'Antalya/Konyaaltı',
-        order: 2,
-        categoryId: categories[1].id,
+        order: 4,
       },
     }),
-    // Satılık Arsa
     prisma.property.upsert({
       where: { id: '5' },
       update: {},
@@ -146,121 +94,44 @@ async function main() {
         price: 450000,
         minOfferPrice: 400000,
         location: 'Antalya/Kepez',
-        order: 1,
-        categoryId: categories[2].id,
-      },
-    }),
-    // Ticari
-    prisma.property.upsert({
-      where: { id: '6' },
-      update: {},
-      create: {
-        title: 'Kiralık Dükkan',
-        description: 'Ana cadde üzerinde, 50 m² dükkan. Yoğun insan trafiği. Her türlü ticarete uygun.',
-        price: 15000,
-        location: 'Bursa/Osmangazi',
-        order: 1,
-        categoryId: categories[3].id,
-      },
-    }),
-    prisma.property.upsert({
-      where: { id: '7' },
-      update: {},
-      create: {
-        title: 'Satılık Ofis',
-        description: 'İş merkezinde 120 m² ofis. Kliması, güvenliği ve otoparkı mevcut.',
-        price: 680000,
-        minOfferPrice: 650000,
-        location: 'İstanbul/Şişli',
-        order: 2,
-        categoryId: categories[3].id,
+        order: 5,
       },
     }),
   ])
 
-  console.log('� Created properties:', properties.length)
+  console.log('🏠 Created properties:', properties.map(p => p.title))
 
-  // Create property images using actual property IDs
-  await prisma.propertyImage.createMany({
-    data: [
-      { propertyId: properties[0].id, url: '/placeholder-campaign.jpg', order: 1 },
-      { propertyId: properties[0].id, url: '/placeholder-campaign.jpg', order: 2 },
-      { propertyId: properties[1].id, url: '/placeholder-campaign.jpg', order: 1 },
-      { propertyId: properties[2].id, url: '/placeholder-campaign.jpg', order: 1 },
-      { propertyId: properties[3].id, url: '/placeholder-campaign.jpg', order: 1 },
-      { propertyId: properties[4].id, url: '/placeholder-campaign.jpg', order: 1 },
-      { propertyId: properties[5].id, url: '/placeholder-campaign.jpg', order: 1 },
-      { propertyId: properties[6].id, url: '/placeholder-campaign.jpg', order: 1 },
-    ]
-  })
-
-  // Create property tags using actual property IDs
+  // Create property tags with icons
   await prisma.propertyTag.createMany({
     data: [
       // Property 1 tags
-      { propertyId: properties[0].id, name: 'Merkezi Konum' },
-      { propertyId: properties[0].id, name: 'Otopark' },
-      { propertyId: properties[0].id, name: 'Güvenlik' },
-      { propertyId: properties[0].id, name: 'Asansör' },
+      { propertyId: properties[0].id, name: 'Merkezi Konum', icon: 'MapPin' },
+      { propertyId: properties[0].id, name: 'Otopark', icon: 'Car' },
+      { propertyId: properties[0].id, name: 'Güvenlik', icon: 'Shield' },
+      { propertyId: properties[0].id, name: 'Asansör', icon: 'ArrowUpDown' },
       // Property 2 tags
-      { propertyId: properties[1].id, name: 'Villa' },
-      { propertyId: properties[1].id, name: 'Bahçe' },
-      { propertyId: properties[1].id, name: 'Havuz' },
-      { propertyId: properties[1].id, name: 'Sauna' },
+      { propertyId: properties[1].id, name: 'Villa', icon: 'Home' },
+      { propertyId: properties[1].id, name: 'Bahçe', icon: 'Trees' },
+      { propertyId: properties[1].id, name: 'Havuz', icon: 'Waves' },
+      { propertyId: properties[1].id, name: 'Deniz Manzarası', icon: 'Eye' },
       // Property 3 tags
-      { propertyId: properties[2].id, name: 'Eşyalı' },
-      { propertyId: properties[2].id, name: 'Yeni Yapı' },
-      { propertyId: properties[2].id, name: 'Beyaz Eşya' },
+      { propertyId: properties[2].id, name: 'Eşyalı', icon: 'Sofa' },
+      { propertyId: properties[2].id, name: 'Yeni Yapı', icon: 'Sparkles' },
+      { propertyId: properties[2].id, name: 'Beyaz Eşya', icon: 'Refrigerator' },
       // Property 4 tags
-      { propertyId: properties[3].id, name: 'Deniz Manzarası' },
-      { propertyId: properties[3].id, name: 'Balkon' },
-      { propertyId: properties[3].id, name: 'Güvenlik' },
+      { propertyId: properties[3].id, name: 'Deniz Manzarası', icon: 'Eye' },
+      { propertyId: properties[3].id, name: 'Balkon', icon: 'Building2' },
+      { propertyId: properties[3].id, name: 'Güvenlik', icon: 'Shield' },
       // Property 5 tags
-      { propertyId: properties[4].id, name: 'İmarlı' },
-      { propertyId: properties[4].id, name: 'Elektrik' },
-      { propertyId: properties[4].id, name: 'Su' },
-      // Property 6 tags
-      { propertyId: properties[5].id, name: 'Ana Cadde' },
-      { propertyId: properties[5].id, name: 'Yoğun Trafik' },
-      // Property 7 tags
-      { propertyId: properties[6].id, name: 'İş Merkezi' },
-      { propertyId: properties[6].id, name: 'Klima' },
-      { propertyId: properties[6].id, name: 'Otopark' },
+      { propertyId: properties[4].id, name: 'İmarlı', icon: 'FileCheck' },
+      { propertyId: properties[4].id, name: 'Elektrik', icon: 'Zap' },
+      { propertyId: properties[4].id, name: 'Su', icon: 'Droplets' },
     ]
   })
 
-  console.log('🏷️ Created property tags')
-
-  // Create sample campaign with schedules
-  const campaign = await prisma.campaign.upsert({
-    where: { id: '1' },
-    update: {},
-    create: {
-      name: 'Yaz Fırsatları',
-      description: 'Yaz aylarında özel fiyatlarla emlak fırsatları! Tüm ilanlarımızda indirim.',
-      image: '/placeholder-campaign.jpg',
-      isActive: true,
-    },
-  })
-
-  // Create campaign schedule (Pazartesi-Cuma, 09:00-18:00)
-  await prisma.campaignSchedule.createMany({
-    data: [
-      { campaignId: campaign.id, dayOfWeek: 1, startTime: '09:00', endTime: '18:00' }, // Pazartesi
-      { campaignId: campaign.id, dayOfWeek: 2, startTime: '09:00', endTime: '18:00' }, // Salı
-      { campaignId: campaign.id, dayOfWeek: 3, startTime: '09:00', endTime: '18:00' }, // Çarşamba
-      { campaignId: campaign.id, dayOfWeek: 4, startTime: '09:00', endTime: '18:00' }, // Perşembe
-      { campaignId: campaign.id, dayOfWeek: 5, startTime: '09:00', endTime: '18:00' }, // Cuma
-    ]
-  })
-
-  console.log('📢 Created campaign with schedule:', campaign.name)
+  console.log('🏷️ Created property tags with icons')
 
   console.log('✅ Seed completed successfully!')
-  console.log('\n📋 Login credentials:')
-  console.log('Email: hizmet@qresnaf.com')
-  console.log('Password: admin123')
-  console.log('\n🏠 Sample properties created with images and tags')
 }
 
 main()

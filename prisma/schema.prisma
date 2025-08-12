@@ -49,6 +49,7 @@ model PropertyImage {
 model PropertyTag {
   id         String   @id @default(cuid())
   name       String
+  icon       String?  // Lucide icon name
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())

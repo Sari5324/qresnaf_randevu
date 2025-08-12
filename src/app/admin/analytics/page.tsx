@@ -27,7 +27,7 @@ export default async function AnalyticsPage() {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
     
     // Delete old records silently in background
-    prisma.categoryView.deleteMany({
+    prisma.propertyView.deleteMany({
       where: {
         viewedAt: {
           lt: thirtyDaysAgo
@@ -50,13 +50,13 @@ export default async function AnalyticsPage() {
     todayViews,
     last30DaysViews,
     locationViews,
-    topCategories
+    topProperties
   ] = await Promise.all([
     // Total views
-    prisma.categoryView.count(),
+    prisma.propertyView.count(),
     
     // Today views
-    prisma.categoryView.count({
+    prisma.propertyView.count({
       where: {
         viewedAt: {
           gte: today
@@ -65,7 +65,7 @@ export default async function AnalyticsPage() {
     }),
     
     // Last 30 days views
-    prisma.categoryView.count({
+    prisma.propertyView.count({
       where: {
         viewedAt: {
           gte: thirtyDaysAgo
@@ -74,7 +74,7 @@ export default async function AnalyticsPage() {
     }),
     
     // Location views
-    prisma.categoryView.groupBy({
+    prisma.propertyView.groupBy({
       by: ['location'],
       _count: {
         id: true
@@ -91,15 +91,15 @@ export default async function AnalyticsPage() {
       }
     }),
     
-    // Top categories with names
-    prisma.category.findMany({
+    // Top properties with view counts
+    prisma.property.findMany({
       include: {
         _count: {
-          select: { analytics: true }
+          select: { views: true }
         }
       },
       orderBy: {
-        analytics: {
+        views: {
           _count: 'desc'
         }
       },
@@ -108,12 +108,12 @@ export default async function AnalyticsPage() {
   ])
 
   // Get recent views for timeline
-  const recentViews = await prisma.categoryView.findMany({
+  const recentViews = await prisma.propertyView.findMany({
     take: 20,
     orderBy: { viewedAt: 'desc' },
     include: {
-      category: {
-        select: { name: true }
+      property: {
+        select: { title: true }
       }
     }
   })
@@ -207,23 +207,23 @@ export default async function AnalyticsPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-6 md:px-0">
-            {/* Top Categories */}
+            {/* Top Properties */}
             <div className="bg-white shadow rounded-lg">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">En Çok Görüntülenen Kategoriler</h3>
+                <h3 className="text-lg font-medium text-gray-900">En Çok Görüntülenen İlanlar</h3>
               </div>
               <div className="p-6">
-                {topCategories.length > 0 ? (
+                {topProperties.length > 0 ? (
                   <div className="space-y-4">
-                    {topCategories.map((category, index) => (
-                      <div key={category.id} className="flex items-center justify-between">
+                    {topProperties.map((property: any, index: number) => (
+                      <div key={property.id} className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-medium text-sm mr-3">
                             {index + 1}
                           </div>
-                          <span className="text-sm font-medium text-gray-900">{category.name}</span>
+                          <span className="text-sm font-medium text-gray-900">{property.title}</span>
                         </div>
-                        <span className="text-sm text-gray-500">{category._count.analytics} görüntüleme</span>
+                        <span className="text-sm text-gray-500">{property._count.views} görüntüleme</span>
                       </div>
                     ))}
                   </div>
@@ -243,7 +243,7 @@ export default async function AnalyticsPage() {
               <div className="p-6">
                 {locationViews.length > 0 ? (
                   <div className="space-y-4">
-                    {locationViews.slice(0, 10).map((location, index) => (
+                    {locationViews.slice(0, 10).map((location: any, index: number) => (
                       <div key={location.location} className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-medium text-sm mr-3">
@@ -272,7 +272,7 @@ export default async function AnalyticsPage() {
                 {recentViews.length > 0 ? (
                   <div className="flow-root">
                     <ul className="-mb-8">
-                      {recentViews.map((view, index) => (
+                      {recentViews.map((view: any, index: number) => (
                         <li key={view.id}>
                           <div className="relative pb-8">
                             {index !== recentViews.length - 1 && (
@@ -290,7 +290,7 @@ export default async function AnalyticsPage() {
                               <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                                 <div>
                                   <p className="text-sm text-gray-500">
-                                    <span className="font-medium text-gray-900">{view.category.name}</span> kategorisi görüntülendi
+                                    <span className="font-medium text-gray-900">{view.property.title}</span> ilanı görüntülendi
                                   </p>
                                   {view.location && (
                                     <p className="text-xs text-gray-400 mt-1">

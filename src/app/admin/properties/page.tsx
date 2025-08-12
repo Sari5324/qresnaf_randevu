@@ -4,9 +4,10 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminNav from '@/components/AdminNav'
 import AdminFoot from '@/components/AdminFoot'
-import { Edit, Trash2, Image as ImageIcon, GripVertical, Home } from 'lucide-react'
+import { Edit, Trash2, Image as ImageIcon, GripVertical, Star } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { getDisplayLocation } from '@/lib/geocoding'
 
 interface Property {
   id: string
@@ -136,6 +137,30 @@ export default function PropertiesPage() {
     }
   }
 
+  const handleToggleFeatured = async (propertyId: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`/api/admin/properties/${propertyId}/featured`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          isFeatured: !currentStatus
+        }),
+      })
+      
+      if (response.ok) {
+        await fetchProperties()
+      } else {
+        const error = await response.json()
+        alert(error.error || 'İşlem başarısız')
+      }
+    } catch (error) {
+      console.error('Toggle featured error:', error)
+      alert('Bağlantı hatası oluştu')
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -230,7 +255,7 @@ export default function PropertiesPage() {
                               />
                             ) : (
                               <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
-                                <Home className="w-5 h-5 text-gray-400" />
+                                <ImageIcon className="w-5 h-5 text-gray-400" />
                               </div>
                             )}
                           </div>
@@ -262,10 +287,21 @@ export default function PropertiesPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {property.location}
+                        {getDisplayLocation(property.location)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end space-x-2">
+                          <button
+                            onClick={() => handleToggleFeatured(property.id, property.isFeatured)}
+                            className={`p-1 rounded transition-colors ${
+                              property.isFeatured 
+                                ? 'text-yellow-600 hover:text-yellow-900 hover:bg-yellow-50' 
+                                : 'text-gray-400 hover:text-yellow-600 hover:bg-yellow-50'
+                            }`}
+                            title={property.isFeatured ? 'Öne çıkarılanlardan kaldır' : 'Öne çıkar'}
+                          >
+                            <Star className={`w-4 h-4 ${property.isFeatured ? 'fill-current' : ''}`} />
+                          </button>
                           <Link
                             href={`/admin/properties/${property.id}/edit`}
                             className="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
@@ -289,7 +325,7 @@ export default function PropertiesPage() {
             {/* Empty State */}
             {properties.length === 0 && (
               <div className="text-center py-12">
-                <Home className="mx-auto h-12 w-12 text-gray-400" />
+                <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">
                   İlan bulunamadı
                 </h3>

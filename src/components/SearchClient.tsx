@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, Search, ImageIcon, Loader2, MapPin } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { getDisplayLocation } from '../lib/geocoding'
 
 interface Property {
   id: string
@@ -211,9 +212,9 @@ export default function SearchClient() {
                       <h3 className="font-bold text-primary-800 text-sm mb-1 mt-2 line-clamp-2">
                         {property.title}
                       </h3>
-                      <div className="flex items-center gap-1 text-gray-500 text-xs mb-2">
+                      <div className="flex items-center gap-1 text-primary-500 text-xs mb-2">
                         <MapPin className="w-3 h-3" />
-                        {property.location}
+                        {getDisplayLocation(property.location)}
                       </div>
                       <div className="flex justify-between items-center mt-auto">
                         <div className="flex flex-wrap gap-1">
