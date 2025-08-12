@@ -374,13 +374,18 @@ export default function SettingsForm({ settings }: SettingsFormProps) {
         </div>
 
         {/* Company Logo */}
-        <FileUpload
-          label="Şirket Logosu (Opsiyonel)"
-          currentImage={formData.companyLogo}
-          onFileSelect={handleFileSelect}
-          onImageRemove={handleImageRemove}
-          error={errors.companyLogo}
-        />
+        <div className="space-y-2">
+          <FileUpload
+            label="Şirket Logosu (Ana Sayfada Görünecek)"
+            currentImage={formData.companyLogo}
+            onFileSelect={handleFileSelect}
+            onImageRemove={handleImageRemove}
+            error={errors.companyLogo}
+          />
+          <p className="text-sm text-gray-500">
+            Logo yüklemezseniz varsayılan QResnaf logosu kullanılacaktır.
+          </p>
+        </div>
       </div>
 
       {/* Submit Button */}

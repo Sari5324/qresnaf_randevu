@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { parseSessionToken } from '@/lib/session'
+import { revalidatePath } from 'next/cache'
 
 // GET - Site ayarlarını getir
 export async function GET(request: NextRequest) {
@@ -116,6 +117,10 @@ export async function PUT(request: NextRequest) {
         }
       })
     }
+
+    // Revalidate homepage to show logo changes immediately
+    revalidatePath('/')
+    revalidatePath('/admin/settings')
 
     return NextResponse.json(updatedSettings)
   } catch (error) {

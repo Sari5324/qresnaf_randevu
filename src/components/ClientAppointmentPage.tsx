@@ -53,6 +53,25 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
   const [bookedSlots, setBookedSlots] = useState<{[key: string]: string[]}>({}) // {date: [times]}
   const [dateOffset, setDateOffset] = useState(0) // Kaç gün ileri/geri
 
+  // Get date range text for current period
+  const getDateRangeText = () => {
+    const dates = generateDates()
+    const firstDate = dates[0]
+    const lastDate = dates[dates.length - 1]
+    
+    const firstMonth = firstDate.toLocaleDateString('tr-TR', { month: 'short' })
+    const lastMonth = lastDate.toLocaleDateString('tr-TR', { month: 'short' })
+    const year = firstDate.getFullYear()
+    
+    if (firstMonth === lastMonth) {
+      // Same month
+      return `${firstDate.getDate()}-${lastDate.getDate()} ${firstMonth} ${year}`
+    } else {
+      // Different months
+      return `${firstDate.getDate()} ${firstMonth} - ${lastDate.getDate()} ${lastMonth} ${year}`
+    }
+  }
+
   // Generate 6 days starting from dateOffset
   const generateDates = () => {
     const dates = []
@@ -231,41 +250,69 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
 
             {/* Staff Selection */}
             <div>
-              <label className="block text-gray-600 font-medium mb-2 text-sm sm:text-base">Personel</label>
-              <select 
-                value={formData.staffId}
-                onChange={(e) => setFormData({ ...formData, staffId: e.target.value })}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-white text-sm sm:text-base"
-              >
-                <option value="">Personel seçiniz</option>
-                {staff.map((member) => (
-                  <option key={member.id} value={member.id}>
-                    {member.name} {member.title && `- ${member.title}`}
-                  </option>
-                ))}
-              </select>
+              <label className="block text-gray-600 font-medium mb-3 text-sm sm:text-base">Personel Seçimi</label>
+              <div className="max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                <div className="grid grid-cols-1 gap-2">
+                  {staff.map((member) => (
+                    <div
+                      key={member.id}
+                      onClick={() => setFormData({ ...formData, staffId: member.id })}
+                      className={`relative p-3 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-sm ${
+                        formData.staffId === member.id
+                          ? 'border-primary-500 bg-primary-50 shadow-sm'
+                          : 'border-gray-200 bg-white hover:border-primary-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                            formData.staffId === member.id ? 'bg-primary-500' : 'bg-gray-400'
+                          }`}>
+                            {member.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-gray-900 text-sm">{member.name}</h3>
+                            {member.title && (
+                              <p className="text-xs text-gray-500">{member.title}</p>
+                            )}
+                          </div>
+                        </div>
+                        {formData.staffId === member.id && (
+                          <div className="flex-shrink-0">
+                            <div className="w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
+                              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Date Selection */}
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-3">
                 <label className="text-gray-600 font-medium text-sm sm:text-base">Randevu Günü</label>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setDateOffset(prev => Math.max(0, prev - 6))}
                     disabled={dateOffset === 0}
-                    className="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 rounded-lg hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-gray-200"
                   >
                     <ChevronLeft className="w-4 h-4 text-gray-600" />
                   </button>
-                  <span className="text-xs text-gray-500 px-2">
-                    {dateOffset === 0 ? 'Bu hafta' : `+${Math.ceil((dateOffset + 1) / 7)} hafta`}
+                  <span className="text-xs text-gray-500 px-3 py-1 bg-gray-100 rounded-full whitespace-nowrap">
+                    {getDateRangeText()}
                   </span>
                   <button
                     type="button"
                     onClick={() => setDateOffset(prev => prev + 6)}
-                    className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+                    className="p-2 rounded-lg hover:bg-primary-50 transition-colors border border-gray-200"
                   >
                     <ChevronRight className="w-4 h-4 text-gray-600" />
                   </button>
@@ -274,23 +321,30 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                 {generateDates().map((date, i) => {
                   const dateStr = date.toISOString().split('T')[0]
+                  const isToday = dateStr === new Date().toISOString().split('T')[0]
                   return (
                     <button
                       key={i}
                       type="button"
                       onClick={() => setSelectedDate(dateStr)}
-                      className={`p-2 sm:p-3 border rounded-xl transition-colors text-center text-xs sm:text-sm ${
+                      className={`p-3 border-2 rounded-xl transition-all duration-200 text-center hover:shadow-sm ${
                         selectedDate === dateStr
-                          ? 'bg-primary-600 text-white border-primary-600'
-                          : 'border-gray-300 hover:bg-primary-50 hover:border-primary-300'
-                      }`}
+                          ? 'bg-primary-600 text-white border-primary-600 shadow-md'
+                          : 'border-gray-200 hover:bg-primary-50 hover:border-primary-300'
+                      } ${isToday ? 'ring-2 ring-orange-200' : ''}`}
                     >
-                      <div className="text-xs text-gray-500">
+                      <div className={`text-xs mb-1 ${selectedDate === dateStr ? 'text-primary-100' : 'text-gray-500'}`}>
                         {date.toLocaleDateString('tr-TR', { weekday: 'short' })}
                       </div>
-                      <div className="font-medium">
+                      <div className="font-bold text-sm">
                         {date.getDate()}
                       </div>
+                      <div className={`text-xs ${selectedDate === dateStr ? 'text-primary-100' : 'text-gray-500'}`}>
+                        {date.toLocaleDateString('tr-TR', { month: 'short' })}
+                      </div>
+                      {isToday && (
+                        <div className="text-xs text-orange-600 font-medium mt-1">Bugün</div>
+                      )}
                     </button>
                   )
                 })}
@@ -299,8 +353,8 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
 
             {/* Time Selection */}
             <div>
-              <label className="block text-gray-600 font-medium mb-2 text-sm sm:text-base">Randevu Saati</label>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              <label className="block text-gray-600 font-medium mb-3 text-sm sm:text-base">Randevu Saati</label>
+              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
                 {timeSlots.map((time) => {
                   const isAvailable = isTimeSlotAvailable(time)
                   return (
@@ -309,17 +363,22 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                       type="button"
                       onClick={() => isAvailable && setSelectedTime(time)}
                       disabled={!isAvailable}
-                      className={`p-2 border rounded-lg transition-colors text-xs sm:text-sm font-medium ${
+                      className={`p-3 border-2 rounded-xl transition-all duration-200 text-center hover:shadow-sm ${
                         !isAvailable
-                          ? 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed'
+                          ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60'
                           : selectedTime === time
-                          ? 'bg-primary-600 text-white border-primary-600'
-                          : 'border-gray-300 hover:bg-primary-50 hover:border-primary-300'
+                          ? 'bg-primary-600 text-white border-primary-600 shadow-md'
+                          : 'border-gray-200 hover:bg-primary-50 hover:border-primary-300'
                       }`}
                     >
-                      {time}
+                      <div className="flex items-center justify-center gap-1">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm font-medium">{time}</span>
+                      </div>
                       {!isAvailable && (
-                        <span className="block text-xs opacity-75">Dolu</span>
+                        <div className="text-xs opacity-75 mt-1">Dolu</div>
                       )}
                     </button>
                   )
@@ -449,34 +508,6 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Staff List */}
-          <div className="space-y-2 sm:space-y-3">
-            {staff.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
-              >
-                <div>
-                  <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                    {member.name}
-                  </h3>
-                  {member.title && (
-                    <p className="text-blue-600 text-xs sm:text-sm">
-                      {member.title}
-                    </p>
-                  )}
-                  {member.phone && (
-                    <p className="text-gray-500 text-xs sm:text-sm flex items-center gap-1 mt-1">
-                      <Phone className="w-3 h-3" />
-                      {member.phone}
-                    </p>
-                  )}
-                </div>
-                <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
-              </div>
-            ))}
           </div>
         </div>
       </div>

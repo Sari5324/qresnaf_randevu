@@ -28,22 +28,25 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="flex items-center gap-2 sm:gap-4">
-              {/* QR Logo */}
-              <div className="relative">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 border-3 sm:border-4 border-black rounded-lg flex items-center justify-center bg-white">
-                  <span className="text-primary-600 font-black text-lg sm:text-2xl">QR</span>
-                </div>
-                {/* Corner brackets */}
-                <div className="absolute -top-1 sm:-top-2 -left-1 sm:-left-2 w-3 sm:w-4 h-3 sm:h-4 border-l-3 sm:border-l-4 border-t-3 sm:border-t-4 border-black"></div>
-                <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2 w-3 sm:w-4 h-3 sm:h-4 border-r-3 sm:border-r-4 border-t-3 sm:border-t-4 border-black"></div>
-                <div className="absolute -bottom-1 sm:-bottom-2 -left-1 sm:-left-2 w-3 sm:w-4 h-3 sm:h-4 border-l-3 sm:border-l-4 border-b-3 sm:border-b-4 border-black"></div>
-                <div className="absolute -bottom-1 sm:-bottom-2 -right-1 sm:-right-2 w-3 sm:w-4 h-3 sm:h-4 border-r-3 sm:border-r-4 border-b-3 sm:border-b-4 border-black"></div>
-              </div>
-              {/* EsnaF Text */}
-              <h1 className="text-2xl sm:text-4xl font-black text-black">
-                EsnaF
-              </h1>
-            </div>
+            {/* Company Logo */}
+            {siteSettings?.companyLogo ? (
+              <img
+                src={siteSettings.companyLogo}
+                alt="Şirket Logosu"
+                className="w-12 h-12 sm:w-16 sm:h-16 object-contain rounded-lg shadow-sm"
+              />
+            ) : (
+              <img
+                src="https://qresnaf.com/private/assets/img/only_qr_logo.png"
+                alt="QResnaf Logo"
+                className="w-12 h-12 sm:w-16 sm:h-16 object-contain rounded-lg shadow-sm"
+              />
+            )}
+            {/* Company Name */}
+            <h1 className="text-2xl sm:text-4xl font-black text-black">
+              {siteSettings?.companyName || 'EsnaF'}
+            </h1>
+          </div>
           </div>
           
           {siteSettings?.description && (

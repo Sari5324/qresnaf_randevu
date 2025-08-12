@@ -1,4 +1,4 @@
-import type { Viewport } from "next";
+import type { Viewport, Metadata } from "next";
 import { Inter, Grenze_Gotisch, Gluten, Fredoka, Newsreader, Playwrite_US_Modern, Phudu, Playfair, Michroma, Advent_Pro } from "next/font/google";
 import { prisma } from "@/lib/prisma";
 import ThemeProvider from "@/components/ThemeProvider";
@@ -62,6 +62,11 @@ const advent_pro = Advent_Pro({
   subsets: ['latin'],
   variable: '--font-advent-pro',
 });
+
+export const metadata: Metadata = {
+  title: 'Sanal Randevu',
+  description: 'Modern randevu yönetim sistemi',
+};
 
 export const viewport: Viewport = {
   width: 'device-width',

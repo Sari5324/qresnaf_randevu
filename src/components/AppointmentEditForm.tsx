@@ -86,10 +86,10 @@ export default function AppointmentEditForm({ appointment, staff }: AppointmentE
 
   // Status options
   const statusOptions = [
-    { value: 'PENDING', label: 'Bekliyor', color: 'text-yellow-600 bg-yellow-100' },
-    { value: 'CONFIRMED', label: 'Onaylandı', color: 'text-green-600 bg-green-100' },
-    { value: 'CANCELLED', label: 'İptal Edildi', color: 'text-red-600 bg-red-100' },
-    { value: 'COMPLETED', label: 'Tamamlandı', color: 'text-blue-600 bg-blue-100' }
+    { value: 'PENDING', label: 'Beklenen', color: 'text-yellow-600 bg-yellow-100' },
+    { value: 'CONFIRMED', label: 'Onaylanan', color: 'text-green-600 bg-green-100' },
+    { value: 'CANCELLED', label: 'İptal Edilen', color: 'text-red-600 bg-red-100' },
+    { value: 'COMPLETED', label: 'Sona Eren', color: 'text-blue-600 bg-blue-100' }
   ]
 
   return (

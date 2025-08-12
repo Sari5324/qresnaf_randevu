@@ -6,9 +6,10 @@ interface SliderImageWithFallbackProps {
   src: string
   alt: string
   className?: string
+  fill?: boolean
 }
 
-export default function SliderImageWithFallback({ src, alt, className }: SliderImageWithFallbackProps) {
+export default function SliderImageWithFallback({ src, alt, className, fill }: SliderImageWithFallbackProps) {
   const [imgSrc, setImgSrc] = useState(src)
 
   const handleError = () => {
@@ -18,7 +19,7 @@ export default function SliderImageWithFallback({ src, alt, className }: SliderI
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img 
-      className={className}
+      className={`${className} ${fill ? 'absolute inset-0 w-full h-full' : ''}`}
       src={imgSrc} 
       alt={alt}
       onError={handleError}

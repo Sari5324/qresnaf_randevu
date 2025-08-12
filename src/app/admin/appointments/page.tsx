@@ -73,13 +73,13 @@ export default async function AdminAppointments() {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'PENDING':
-        return 'Bekliyor'
+        return 'Beklenen'
       case 'CONFIRMED':
-        return 'Onaylandı'
+        return 'Onaylanan'
       case 'CANCELLED':
-        return 'İptal Edildi'
+        return 'İptal Edilen'
       case 'COMPLETED':
-        return 'Tamamlandı'
+        return 'Sona Eren'
       default:
         return status
     }

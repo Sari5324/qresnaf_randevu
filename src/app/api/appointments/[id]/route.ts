@@ -101,15 +101,19 @@ export async function PUT(
     }
 
     // Check for time conflicts (only if date/time/staff changed)
+    const newDate = new Date(date)
     if (
-      existingAppointment.date !== date || 
+      existingAppointment.date.toISOString().split('T')[0] !== newDate.toISOString().split('T')[0] || 
       existingAppointment.time !== time || 
       existingAppointment.staffId !== staffId
     ) {
       const conflictingAppointment = await prisma.appointment.findFirst({
         where: {
           staffId,
-          date,
+          date: {
+            gte: new Date(date + 'T00:00:00.000Z'),
+            lt: new Date(date + 'T23:59:59.999Z')
+          },
           time,
           status: {
             in: ['PENDING', 'CONFIRMED']
@@ -135,7 +139,7 @@ export async function PUT(
         customerName: customerName.trim(),
         customerPhone: customerPhone.trim(),
         staffId,
-        date,
+        date: new Date(date), // Convert string to Date
         time,
         notes: notes?.trim() || null,
         status

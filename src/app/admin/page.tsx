@@ -5,7 +5,7 @@ import AdminNav from '../../components/AdminNav'
 import AdminFoot from '../../components/AdminFoot'
 import Link from 'next/link'
 import { prisma } from '../../lib/prisma'
-import { ChartNoAxesCombined, Settings, Users, Calendar, UserCheck, Images, Clock } from 'lucide-react'
+import { ChartNoAxesCombined, Settings, Calendar, UserCheck, Images, Clock } from 'lucide-react'
 
 export default async function AdminDashboard() {
   // Get session
@@ -47,7 +47,7 @@ export default async function AdminDashboard() {
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Analizler</h3>
                     <p className="text-gray-600 text-sm mb-4">Randevu ve ziyaret istatistikleri</p>
-                    <Link href="/admin/stats" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
+                    <Link href="/admin/analytics" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
                 </div>
@@ -113,19 +113,6 @@ export default async function AdminDashboard() {
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Site Ayarları</h3>
                     <p className="text-gray-600 text-sm mb-4">Tema ve site düzenlemeleri</p>
                     <Link href="/admin/settings" className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
-                        Görüntüle
-                    </Link>
-                </div>
-
-                <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="p-3 bg-red-100 rounded-lg">
-                            <Users className="w-6 h-6 text-red-600"/>
-                        </div>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Kullanıcılar</h3>
-                    <p className="text-gray-600 text-sm mb-4">Yönetici kullanıcı yönetimi</p>
-                    <Link href="/admin/users" className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
                 </div>

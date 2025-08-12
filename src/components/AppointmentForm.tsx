@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Calendar, Clock, User, Phone, Send, Loader2 } from 'lucide-react'
+import { Calendar, Clock, User, Phone, Send, Loader2, Check } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface Staff {
@@ -45,6 +45,22 @@ export default function AppointmentForm({ staff }: AppointmentFormProps) {
     const today = new Date()
     return today.toISOString().split('T')[0]
   }
+
+  // Get next 30 days for date selection
+  const getAvailableDates = () => {
+    const dates = []
+    const today = new Date()
+    
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(today)
+      date.setDate(today.getDate() + i)
+      dates.push(date)
+    }
+    
+    return dates
+  }
+
+  const availableDates = getAvailableDates()
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -158,24 +174,39 @@ export default function AppointmentForm({ staff }: AppointmentFormProps) {
 
       {/* Staff Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
           <User className="w-4 h-4 inline mr-1" />
           Personel Seçimi *
         </label>
-        <select
-          value={formData.staffId}
-          onChange={(e) => setFormData({ ...formData, staffId: e.target.value })}
-          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            errors.staffId ? 'border-red-300' : 'border-gray-300'
-          }`}
-        >
-          <option value="">Personel seçiniz</option>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {staff.map((member) => (
-            <option key={member.id} value={member.id}>
-              {member.name} {member.title && `- ${member.title}`}
-            </option>
+            <div
+              key={member.id}
+              onClick={() => setFormData({ ...formData, staffId: member.id })}
+              className={`relative p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${
+                formData.staffId === member.id
+                  ? 'border-blue-500 bg-blue-50 shadow-md'
+                  : 'border-gray-200 bg-white hover:border-blue-300'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium text-gray-900">{member.name}</h3>
+                  {member.title && (
+                    <p className="text-sm text-gray-500 mt-1">{member.title}</p>
+                  )}
+                </div>
+                {formData.staffId === member.id && (
+                  <div className="flex-shrink-0">
+                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
-        </select>
+        </div>
         {errors.staffId && (
           <p className="text-red-500 text-sm mt-1">{errors.staffId}</p>
         )}
@@ -183,46 +214,92 @@ export default function AppointmentForm({ staff }: AppointmentFormProps) {
 
       {/* Date Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
           <Calendar className="w-4 h-4 inline mr-1" />
-          Tarih *
+          Tarih Seçimi *
         </label>
-        <input
-          type="date"
-          value={formData.date}
-          onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-          min={getMinDate()}
-          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            errors.date ? 'border-red-300' : 'border-gray-300'
-          }`}
-        />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 max-h-48 overflow-y-auto">
+          {availableDates.map((date) => {
+            const dateString = date.toISOString().split('T')[0]
+            const isSelected = formData.date === dateString
+            const isToday = dateString === new Date().toISOString().split('T')[0]
+            
+            return (
+              <div
+                key={dateString}
+                onClick={() => setFormData({ ...formData, date: dateString })}
+                className={`p-3 text-center border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-sm ${
+                  isSelected
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-200 bg-white hover:border-blue-300'
+                } ${isToday ? 'ring-2 ring-orange-200' : ''}`}
+              >
+                <div className="text-xs text-gray-500 mb-1">
+                  {date.toLocaleDateString('tr-TR', { weekday: 'short' })}
+                </div>
+                <div className="font-medium text-sm">
+                  {date.getDate()}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {date.toLocaleDateString('tr-TR', { month: 'short' })}
+                </div>
+                {isToday && (
+                  <div className="text-xs text-orange-600 font-medium mt-1">Bugün</div>
+                )}
+              </div>
+            )
+          })}
+        </div>
         {errors.date && (
           <p className="text-red-500 text-sm mt-1">{errors.date}</p>
+        )}
+        {formData.date && (
+          <p className="text-blue-600 text-sm mt-2 font-medium">
+            Seçilen tarih: {new Date(formData.date).toLocaleDateString('tr-TR', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </p>
         )}
       </div>
 
       {/* Time Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
           <Clock className="w-4 h-4 inline mr-1" />
-          Saat *
+          Saat Seçimi *
         </label>
-        <select
-          value={formData.time}
-          onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            errors.time ? 'border-red-300' : 'border-gray-300'
-          }`}
-        >
-          <option value="">Saat seçiniz</option>
-          {timeSlots.map((time) => (
-            <option key={time} value={time}>
-              {time}
-            </option>
-          ))}
-        </select>
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+          {timeSlots.map((time) => {
+            const isSelected = formData.time === time
+            
+            return (
+              <div
+                key={time}
+                onClick={() => setFormData({ ...formData, time })}
+                className={`p-3 text-center border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-sm ${
+                  isSelected
+                    ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                    : 'border-gray-200 bg-white hover:border-blue-300'
+                }`}
+              >
+                <div className="flex items-center justify-center">
+                  <Clock className="w-3 h-3 mr-1" />
+                  <span className="text-sm">{time}</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
         {errors.time && (
           <p className="text-red-500 text-sm mt-1">{errors.time}</p>
+        )}
+        {formData.time && (
+          <p className="text-blue-600 text-sm mt-2 font-medium">
+            Seçilen saat: {formData.time}
+          </p>
         )}
       </div>
 
