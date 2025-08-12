@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminNav from '@/components/AdminNav'
 import AdminFoot from '@/components/AdminFoot'
+import UserDeleteButton from '@/components/UserDeleteButton'
 import Link from 'next/link'
 import { Edit2, Trash2 } from 'lucide-react'
 
@@ -41,28 +42,6 @@ export default function UsersPage() {
   useEffect(() => {
     fetchUsers()
   }, [fetchUsers])
-
-  const handleDelete = async (userId: string, username: string) => {
-    if (!confirm(`${username} kullanıcısını silmek istediğinizden emin misiniz?`)) {
-      return
-    }
-
-    try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: 'DELETE',
-      })
-      
-      if (response.ok) {
-        await fetchUsers()
-      } else {
-        const errorData = await response.json()
-        alert(errorData.error || 'Kullanıcı silinirken hata oluştu')
-      }
-    } catch (error) {
-      console.error('Failed to delete user:', error)
-      alert('Kullanıcı silinirken hata oluştu')
-    }
-  }
   
     if (isLoading) {
         return (
@@ -180,28 +159,19 @@ export default function UsersPage() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                               <div className="flex items-center justify-end space-x-2">
-                                {currentUserEmail === user.email ? (
-                                  <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                    Sizsiniz
-                                  </span>
-                                ) : (
-                                  <>
-                                    <Link
-                                      href={`/admin/users/${user.id}/edit`}
-                                      className="text-blue-600 hover:text-blue-900 p-1 rounded"
-                                      title="Düzenle"
-                                    >
-                                      <Edit2 className="w-4 h-4" />
-                                    </Link>
-                                    <button
-                                      onClick={() => handleDelete(user.id, user.username)}
-                                      className="text-red-600 hover:text-red-950 p-1 rounded"
-                                      title="Sil"
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </button>
-                                  </>
-                                )}
+                                <Link
+                                  href={`/admin/users/${user.id}/edit`}
+                                  className="text-blue-600 hover:text-blue-900 p-1 rounded"
+                                  title="Düzenle"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </Link>
+                                <UserDeleteButton
+                                  userId={user.id}
+                                  username={user.username}
+                                  currentUserEmail={currentUserEmail}
+                                  userEmail={user.email}
+                                />
                               </div>
                             </td>
                           </tr>

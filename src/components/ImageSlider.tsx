@@ -151,7 +151,8 @@ export default function ImageSlider({ images }: ImageSliderProps) {
               src={image.url}
               alt={image.name}
               fill
-              priority={index === 0}
+              sizes="100vw"
+              priority={index === currentIndex}
               className="object-cover pointer-events-none"
               draggable={false}
             />

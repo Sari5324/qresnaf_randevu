@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma'
-import Image from 'next/image'
 import Link from 'next/link'
-import { User, Search, ChevronRight, ChevronLeft } from 'lucide-react'
+import { Search } from 'lucide-react'
 import ViewTracker from '@/components/ViewTracker'
 import ClientAppointmentPage from '@/components/ClientAppointmentPage'
 

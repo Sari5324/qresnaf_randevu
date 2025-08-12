@@ -3,6 +3,7 @@ import { parseSessionToken } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import AdminNav from '@/components/AdminNav'
 import AdminFoot from '@/components/AdminFoot'
+import AppointmentDeleteButton from '@/components/AppointmentDeleteButton'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { 
@@ -261,9 +262,12 @@ export default async function AdminAppointments() {
                           >
                             <Edit className="w-4 h-4" />
                           </Link>
-                          <button className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <AppointmentDeleteButton
+                            appointmentId={appointment.id}
+                            customerName={appointment.customerName}
+                            date={new Date(appointment.date).toLocaleDateString('tr-TR')}
+                            time={appointment.time}
+                          />
                         </div>
                       </td>
                     </tr>

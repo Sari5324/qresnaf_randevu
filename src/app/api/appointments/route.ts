@@ -174,7 +174,7 @@ export async function GET(request: NextRequest) {
     const staffId = searchParams.get('staffId')
     const date = searchParams.get('date')
 
-    let whereClause: any = {}
+    let whereClause: Record<string, unknown> = {}
 
     // If staffId and date are provided, filter for availability check
     if (staffId && date) {

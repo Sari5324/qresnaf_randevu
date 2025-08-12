@@ -36,7 +36,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, email, phone, title, order } = body
+    const { name, email, phone, title, order, workSchedule } = body
 
     if (!name) {
       return NextResponse.json(
@@ -55,26 +55,33 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // Create default work schedule (Monday-Friday, 9-17)
-    const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
-    
-    await Promise.all(
-      days.map(day => {
-        const isWeekend = day === 'SATURDAY' || day === 'SUNDAY'
-        return prisma.workSchedule.create({
-          data: {
-            staffId: staff.id,
-            dayOfWeek: day as 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY',
-            isWorking: !isWeekend,
-            startTime: !isWeekend ? '09:00' : null,
-            endTime: !isWeekend ? '17:00' : null,
-            interval: !isWeekend ? 30 : null,
-            breakStart: !isWeekend ? '12:00' : null,
-            breakEnd: !isWeekend ? '13:00' : null,
-          }
-        })
-      })
-    )
+    // Create work schedule if provided
+    if (workSchedule && workSchedule.length > 0) {
+      await Promise.all(
+        workSchedule.map((schedule: {
+          dayOfWeek: string
+          isWorking: boolean
+          startTime?: string
+          endTime?: string
+          interval?: number
+          breakStart?: string
+          breakEnd?: string
+        }) => 
+          prisma.workSchedule.create({
+            data: {
+              staffId: staff.id,
+              dayOfWeek: schedule.dayOfWeek as 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY',
+              isWorking: schedule.isWorking,
+              startTime: schedule.startTime || null,
+              endTime: schedule.endTime || null,
+              interval: schedule.interval || 30,
+              breakStart: schedule.breakStart || null,
+              breakEnd: schedule.breakEnd || null,
+            }
+          })
+        )
+      )
+    }
 
     return NextResponse.json(
       { 

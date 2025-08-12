@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 
 export interface SessionData {
   userId: string
   role: string
   expires: number
+}
+
+export async function getSession(): Promise<SessionData | null> {
+  try {
+    const cookieStore = await cookies()
+    const sessionCookie = cookieStore.get('session')?.value
+    if (!sessionCookie) return null
+    
+    return parseSessionToken(sessionCookie)
+  } catch {
+    return null
+  }
 }
 
 export function createSessionToken(userId: string, role: string): string {

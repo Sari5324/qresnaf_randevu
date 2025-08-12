@@ -19,7 +19,7 @@ interface PropertyTagProps {
 }
 
 // Map icon names to Lucide components
-const iconMap: { [key: string]: any } = {
+const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
     'ArmChair': Armchair,
     'Bath': Bath,
     'BedDouble': BedDouble,

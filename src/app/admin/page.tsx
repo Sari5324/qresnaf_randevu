@@ -1,10 +1,10 @@
 import { cookies } from 'next/headers'
-import { parseSessionToken } from '@/lib/session'
+import { parseSessionToken } from '../../lib/session'
 import { redirect } from 'next/navigation'
-import AdminNav from '@/components/AdminNav'
-import AdminFoot from '@/components/AdminFoot'
+import AdminNav from '../../components/AdminNav'
+import AdminFoot from '../../components/AdminFoot'
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '../../lib/prisma'
 import { ChartNoAxesCombined, Settings, Users, Calendar, UserCheck, Images, Clock } from 'lucide-react'
 
 export default async function AdminDashboard() {
@@ -47,7 +47,7 @@ export default async function AdminDashboard() {
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Analizler</h3>
                     <p className="text-gray-600 text-sm mb-4">Randevu ve ziyaret istatistikleri</p>
-                    <Link href="/admin/analytics" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
+                    <Link href="/admin/stats" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
                 </div>
