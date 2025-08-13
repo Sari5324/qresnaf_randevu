@@ -52,6 +52,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
   const [appointmentCode, setAppointmentCode] = useState('')
   const [bookedSlots, setBookedSlots] = useState<{[key: string]: string[]}>({}) // {date: [times]}
   const [dateOffset, setDateOffset] = useState(0) // Kaç gün ileri/geri
+  const [staffSchedule, setStaffSchedule] = useState<any[]>([]) // Seçili personelin çalışma programı
 
   // Get date range text for current period
   const getDateRangeText = () => {
@@ -88,6 +89,91 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
     '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
     '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
   ]
+
+  // Load staff work schedule
+  const loadStaffSchedule = useCallback(async (staffId: string) => {
+    if (!staffId) {
+      setStaffSchedule([])
+      return
+    }
+
+    // Find staff from the existing staff list since it already includes workSchedule
+    const selectedStaff = staff.find(member => member.id === staffId)
+    
+    if (selectedStaff && (selectedStaff as any).workSchedule) {
+      setStaffSchedule((selectedStaff as any).workSchedule)
+    } else {
+      console.log('No workSchedule found for staff:', selectedStaff)
+      setStaffSchedule([])
+    }
+  }, [staff])
+
+  // Generate time slots based on staff schedule for a specific date
+  const getAvailableTimeSlotsForDate = (date: Date) => {
+    if (!formData.staffId || staffSchedule.length === 0) {
+      return timeSlots // Return default slots if no staff selected or no schedule
+    }
+
+    const dayOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][date.getDay()]
+    const daySchedule = staffSchedule.find(schedule => schedule.dayOfWeek === dayOfWeek)
+    
+    if (!daySchedule || !daySchedule.isWorking) {
+      return [] // No work on this day
+    }
+
+    // Generate time slots based on staff's work hours
+    const startTime = daySchedule.startTime || '09:00'
+    const endTime = daySchedule.endTime || '17:00'
+    const interval = daySchedule.interval || 30
+    const breakStart = daySchedule.breakStart
+    const breakEnd = daySchedule.breakEnd
+
+    const slots = []
+    const [startHour, startMin] = startTime.split(':').map(Number)
+    const [endHour, endMin] = endTime.split(':').map(Number)
+    
+    let currentTime = startHour * 60 + startMin // Convert to minutes
+    const endTimeMinutes = endHour * 60 + endMin
+    
+    while (currentTime < endTimeMinutes) {
+      const hours = Math.floor(currentTime / 60)
+      const minutes = currentTime % 60
+      const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+      
+      // Check if this time is during break
+      let isDuringBreak = false
+      if (breakStart && breakEnd) {
+        const [breakStartHour, breakStartMin] = breakStart.split(':').map(Number)
+        const [breakEndHour, breakEndMin] = breakEnd.split(':').map(Number)
+        const breakStartMinutes = breakStartHour * 60 + breakStartMin
+        const breakEndMinutes = breakEndHour * 60 + breakEndMin
+        
+        if (currentTime >= breakStartMinutes && currentTime < breakEndMinutes) {
+          isDuringBreak = true
+        }
+      }
+      
+      if (!isDuringBreak) {
+        slots.push(timeString)
+      }
+      
+      currentTime += interval
+    }
+    
+    return slots
+  }
+
+  // Check if a date is available (staff works on this day)
+  const isDateAvailable = (date: Date) => {
+    if (!formData.staffId || staffSchedule.length === 0) {
+      return true // Available if no staff selected
+    }
+
+    const dayOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][date.getDay()]
+    const daySchedule = staffSchedule.find(schedule => schedule.dayOfWeek === dayOfWeek)
+    
+    return daySchedule && daySchedule.isWorking
+  }
 
   // Load booked appointments for selected staff and date
   const loadBookedSlots = useCallback(async (staffId: string, selectedDate: string) => {
@@ -126,6 +212,18 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
       loadBookedSlots(formData.staffId, selectedDate)
     }
   }, [formData.staffId, selectedDate, loadBookedSlots])
+
+  // Load staff schedule when staff changes
+  useEffect(() => {
+    if (formData.staffId) {
+      loadStaffSchedule(formData.staffId)
+    } else {
+      setStaffSchedule([])
+    }
+    // Reset date and time when staff changes
+    setSelectedDate('')
+    setSelectedTime('')
+  }, [formData.staffId, loadStaffSchedule])
 
   // Reset selected date when dateOffset changes
   useEffect(() => {
@@ -291,6 +389,38 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                   ))}
                 </div>
               </div>
+              
+              {/* Staff Schedule Info */}
+              {formData.staffId && staffSchedule.length > 0 && (
+                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h4 className="text-sm font-medium text-blue-900 mb-2">Çalışma Saatleri</h4>
+                  <div className="grid grid-cols-1 gap-1 text-xs">
+                    {staffSchedule.map((schedule) => {
+                      const dayNames = {
+                        MONDAY: 'Pazartesi',
+                        TUESDAY: 'Salı', 
+                        WEDNESDAY: 'Çarşamba',
+                        THURSDAY: 'Perşembe',
+                        FRIDAY: 'Cuma',
+                        SATURDAY: 'Cumartesi',
+                        SUNDAY: 'Pazar'
+                      }
+                      
+                      return (
+                        <div key={schedule.dayOfWeek} className="flex justify-between items-center">
+                          <span className="text-blue-700">{dayNames[schedule.dayOfWeek as keyof typeof dayNames]}</span>
+                          <span className={`font-medium ${schedule.isWorking ? 'text-blue-900' : 'text-gray-500'}`}>
+                            {schedule.isWorking 
+                              ? `${schedule.startTime} - ${schedule.endTime}` 
+                              : 'Kapalı'
+                            }
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Date Selection */}
@@ -322,27 +452,47 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                 {generateDates().map((date, i) => {
                   const dateStr = date.toISOString().split('T')[0]
                   const isToday = dateStr === new Date().toISOString().split('T')[0]
+                  const isAvailable = isDateAvailable(date)
+                  
                   return (
                     <button
                       key={i}
                       type="button"
-                      onClick={() => setSelectedDate(dateStr)}
+                      onClick={() => isAvailable && setSelectedDate(dateStr)}
+                      disabled={!isAvailable}
                       className={`p-3 border-2 rounded-xl transition-all duration-200 text-center hover:shadow-sm ${
-                        selectedDate === dateStr
+                        !isAvailable
+                          ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60'
+                          : selectedDate === dateStr
                           ? 'bg-primary-600 text-white border-primary-600 shadow-md'
                           : 'border-gray-200 hover:bg-primary-50 hover:border-primary-300'
-                      } ${isToday ? 'ring-2 ring-orange-200' : ''}`}
+                      } ${isToday && isAvailable ? 'ring-2 ring-orange-200' : ''}`}
                     >
-                      <div className={`text-xs mb-1 ${selectedDate === dateStr ? 'text-primary-100' : 'text-gray-500'}`}>
+                      <div className={`text-xs mb-1 ${
+                        !isAvailable 
+                          ? 'text-gray-400' 
+                          : selectedDate === dateStr 
+                          ? 'text-primary-100' 
+                          : 'text-gray-500'
+                      }`}>
                         {date.toLocaleDateString('tr-TR', { weekday: 'short' })}
                       </div>
                       <div className="font-bold text-sm">
                         {date.getDate()}
                       </div>
-                      <div className={`text-xs ${selectedDate === dateStr ? 'text-primary-100' : 'text-gray-500'}`}>
+                      <div className={`text-xs ${
+                        !isAvailable 
+                          ? 'text-gray-400' 
+                          : selectedDate === dateStr 
+                          ? 'text-primary-100' 
+                          : 'text-gray-500'
+                      }`}>
                         {date.toLocaleDateString('tr-TR', { month: 'short' })}
                       </div>
-                      {isToday && (
+                      {!isAvailable && (
+                        <div className="text-xs text-gray-400 font-medium mt-1">Kapalı</div>
+                      )}
+                      {isToday && isAvailable && (
                         <div className="text-xs text-orange-600 font-medium mt-1">Bugün</div>
                       )}
                     </button>
@@ -354,36 +504,63 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
             {/* Time Selection */}
             <div>
               <label className="block text-gray-600 font-medium mb-3 text-sm sm:text-base">Randevu Saati</label>
-              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
-                {timeSlots.map((time) => {
-                  const isAvailable = isTimeSlotAvailable(time)
-                  return (
-                    <button
-                      key={time}
-                      type="button"
-                      onClick={() => isAvailable && setSelectedTime(time)}
-                      disabled={!isAvailable}
-                      className={`p-3 border-2 rounded-xl transition-all duration-200 text-center hover:shadow-sm ${
-                        !isAvailable
-                          ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60'
-                          : selectedTime === time
-                          ? 'bg-primary-600 text-white border-primary-600 shadow-md'
-                          : 'border-gray-200 hover:bg-primary-50 hover:border-primary-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-center gap-1">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-sm font-medium">{time}</span>
-                      </div>
-                      {!isAvailable && (
-                        <div className="text-xs opacity-75 mt-1">Dolu</div>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
+              {!selectedDate ? (
+                <div className="text-center py-8 text-gray-500">
+                  <svg className="w-8 h-8 mx-auto mb-2 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm">Önce tarih seçiniz</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                  {(() => {
+                    const selectedDateObj = new Date(selectedDate)
+                    const availableSlots = getAvailableTimeSlotsForDate(selectedDateObj)
+                    
+                    if (availableSlots.length === 0) {
+                      return (
+                        <div className="col-span-full text-center py-8 text-gray-500">
+                          <svg className="w-8 h-8 mx-auto mb-2 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm8.707-10.293a1 1 0 00-1.414-1.414L9 14.586l-4.293-4.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0l9-9z" clipRule="evenodd" />
+                          </svg>
+                          <p className="text-sm">Bu tarihte çalışma saati bulunmamaktadır</p>
+                        </div>
+                      )
+                    }
+                    
+                    return availableSlots.map((time) => {
+                      const isBooked = !isTimeSlotAvailable(time)
+                      const isAvailable = !isBooked
+                      
+                      return (
+                        <button
+                          key={time}
+                          type="button"
+                          onClick={() => isAvailable && setSelectedTime(time)}
+                          disabled={!isAvailable}
+                          className={`p-3 border-2 rounded-xl transition-all duration-200 text-center hover:shadow-sm ${
+                            !isAvailable
+                              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60'
+                              : selectedTime === time
+                              ? 'bg-primary-600 text-white border-primary-600 shadow-md'
+                              : 'border-gray-200 hover:bg-primary-50 hover:border-primary-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-center gap-1">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-sm font-medium">{time}</span>
+                          </div>
+                          {!isAvailable && (
+                            <div className="text-xs opacity-75 mt-1">Dolu</div>
+                          )}
+                        </button>
+                      )
+                    })
+                  })()}
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}

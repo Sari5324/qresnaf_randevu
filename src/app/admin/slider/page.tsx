@@ -2,7 +2,11 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { parseSessionToken } from '@/lib/session'
 import { prisma } from '@/lib/prisma'
+import AdminNav from '@/components/AdminNav'
+import AdminFoot from '@/components/AdminFoot'
 import SliderClientPage from '@/components/SliderClientPage'
+import Link from 'next/link'
+import { Images } from 'lucide-react'
 
 export const metadata = {
   title: 'Slider Yönetimi - Admin Panel',
@@ -51,10 +55,35 @@ export default async function SliderPage(props: {
   const activeImages = sliderImages.filter(img => img.isActive).length
 
   return (
-    <SliderClientPage 
-      sliderImages={sliderImages}
-      totalImages={totalCount}
-      activeImages={activeImages}
-    />
+    <>
+      <AdminNav />
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="mb-8">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Slider Yönetimi</h1>
+                <p className="mt-2 text-gray-600">Ana sayfa slider görsellerini yönetin</p>
+              </div>
+              <Link
+                href="/admin/slider/new"
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <Images className="w-4 h-4" />
+                Yeni Görsel Ekle
+              </Link>
+            </div>
+          </div>
+
+          <SliderClientPage 
+            sliderImages={sliderImages}
+            totalImages={totalCount}
+            activeImages={activeImages}
+          />
+        </div>
+      </div>
+      <AdminFoot />
+    </>
   )
 }

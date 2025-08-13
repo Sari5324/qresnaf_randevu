@@ -22,10 +22,10 @@ export default async function NewSliderImage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <>
       <AdminNav />
-      <main className="main-content flex-grow bg-white">
-        <div className="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <Link
               href="/admin/slider"
@@ -42,8 +42,8 @@ export default async function NewSliderImage() {
             <SliderForm />
           </div>
         </div>
-      </main>
+      </div>
       <AdminFoot />
-    </div>
+    </>
   )
 }
