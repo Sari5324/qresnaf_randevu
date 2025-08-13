@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { User, ChevronRight, ChevronLeft, Phone, Play, Pause } from 'lucide-react'
+import { User, ChevronRight, ChevronLeft, Play, Pause } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface Staff {
@@ -11,6 +11,18 @@ interface Staff {
   title?: string | null
   email?: string | null
   phone?: string | null
+  workSchedule?: WorkSchedule[]
+}
+
+interface WorkSchedule {
+  id: string
+  dayOfWeek: string
+  isWorking: boolean
+  startTime?: string | null
+  endTime?: string | null
+  breakStart?: string | null
+  breakEnd?: string | null
+  interval?: number | null
 }
 
 interface SliderImage {
@@ -52,7 +64,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
   const [appointmentCode, setAppointmentCode] = useState('')
   const [bookedSlots, setBookedSlots] = useState<{[key: string]: string[]}>({}) // {date: [times]}
   const [dateOffset, setDateOffset] = useState(0) // Kaç gün ileri/geri
-  const [staffSchedule, setStaffSchedule] = useState<any[]>([]) // Seçili personelin çalışma programı
+  const [staffSchedule, setStaffSchedule] = useState<WorkSchedule[]>([]) // Seçili personelin çalışma programı
 
   // Get date range text for current period
   const getDateRangeText = () => {
@@ -73,22 +85,16 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
     }
   }
 
-  // Generate 6 days starting from dateOffset
+  // Generate 7 days starting from dateOffset
   const generateDates = () => {
     const dates = []
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 7; i++) {
       const date = new Date()
       date.setDate(date.getDate() + dateOffset + i)
       dates.push(date)
     }
     return dates
   }
-
-  // Generate more flexible time slots
-  const timeSlots = [
-    '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-    '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
-  ]
 
   // Load staff work schedule
   const loadStaffSchedule = useCallback(async (staffId: string) => {
@@ -100,8 +106,12 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
     // Find staff from the existing staff list since it already includes workSchedule
     const selectedStaff = staff.find(member => member.id === staffId)
     
-    if (selectedStaff && (selectedStaff as any).workSchedule) {
-      setStaffSchedule((selectedStaff as any).workSchedule)
+    console.log('Selected staff:', selectedStaff)
+    console.log('Staff workSchedule:', selectedStaff?.workSchedule)
+    
+    if (selectedStaff?.workSchedule) {
+      console.log('Setting staff schedule:', selectedStaff.workSchedule)
+      setStaffSchedule(selectedStaff.workSchedule)
     } else {
       console.log('No workSchedule found for staff:', selectedStaff)
       setStaffSchedule([])
@@ -111,7 +121,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
   // Generate time slots based on staff schedule for a specific date
   const getAvailableTimeSlotsForDate = (date: Date) => {
     if (!formData.staffId || staffSchedule.length === 0) {
-      return timeSlots // Return default slots if no staff selected or no schedule
+      return [] // Return empty array if no staff selected or no schedule
     }
 
     const dayOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][date.getDay()]
@@ -165,8 +175,14 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
 
   // Check if a date is available (staff works on this day)
   const isDateAvailable = (date: Date) => {
-    if (!formData.staffId || staffSchedule.length === 0) {
-      return true // Available if no staff selected
+    // Eğer personel seçilmemişse false döndür (gün seçilemesin)
+    if (!formData.staffId) {
+      return false
+    }
+
+    // Eğer personel seçili ama çalışma programı yoksa false döndür
+    if (staffSchedule.length === 0) {
+      return false
     }
 
     const dayOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][date.getDay()]
@@ -395,29 +411,35 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                 <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                   <h4 className="text-sm font-medium text-blue-900 mb-2">Çalışma Saatleri</h4>
                   <div className="grid grid-cols-1 gap-1 text-xs">
-                    {staffSchedule.map((schedule) => {
-                      const dayNames = {
-                        MONDAY: 'Pazartesi',
-                        TUESDAY: 'Salı', 
-                        WEDNESDAY: 'Çarşamba',
-                        THURSDAY: 'Perşembe',
-                        FRIDAY: 'Cuma',
-                        SATURDAY: 'Cumartesi',
-                        SUNDAY: 'Pazar'
-                      }
-                      
-                      return (
-                        <div key={schedule.dayOfWeek} className="flex justify-between items-center">
-                          <span className="text-blue-700">{dayNames[schedule.dayOfWeek as keyof typeof dayNames]}</span>
-                          <span className={`font-medium ${schedule.isWorking ? 'text-blue-900' : 'text-gray-500'}`}>
-                            {schedule.isWorking 
-                              ? `${schedule.startTime} - ${schedule.endTime}` 
-                              : 'Kapalı'
-                            }
-                          </span>
-                        </div>
-                      )
-                    })}
+                    {staffSchedule
+                      .sort((a, b) => {
+                        // Gün sıralaması: Pazartesi'den Pazar'a
+                        const dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+                        return dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek)
+                      })
+                      .map((schedule) => {
+                        const dayNames = {
+                          MONDAY: 'Pazartesi',
+                          TUESDAY: 'Salı', 
+                          WEDNESDAY: 'Çarşamba',
+                          THURSDAY: 'Perşembe',
+                          FRIDAY: 'Cuma',
+                          SATURDAY: 'Cumartesi',
+                          SUNDAY: 'Pazar'
+                        }
+                        
+                        return (
+                          <div key={schedule.dayOfWeek} className="flex justify-between items-center">
+                            <span className="text-blue-700">{dayNames[schedule.dayOfWeek as keyof typeof dayNames]}</span>
+                            <span className={`font-medium ${schedule.isWorking ? 'text-blue-900' : 'text-gray-500'}`}>
+                              {schedule.isWorking 
+                                ? `${schedule.startTime} - ${schedule.endTime}` 
+                                : 'Çalışmıyor'
+                              }
+                            </span>
+                          </div>
+                        )
+                      })}
                   </div>
                 </div>
               )}
@@ -448,7 +470,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                   </button>
                 </div>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              <div className="grid grid-cols-7 gap-1 sm:gap-2">
                 {generateDates().map((date, i) => {
                   const dateStr = date.toISOString().split('T')[0]
                   const isToday = dateStr === new Date().toISOString().split('T')[0]
@@ -490,7 +512,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                         {date.toLocaleDateString('tr-TR', { month: 'short' })}
                       </div>
                       {!isAvailable && (
-                        <div className="text-xs text-gray-400 font-medium mt-1">Kapalı</div>
+                        <div className="text-xs text-gray-400 font-medium mt-1">Çalışmıyor</div>
                       )}
                       {isToday && isAvailable && (
                         <div className="text-xs text-orange-600 font-medium mt-1">Bugün</div>

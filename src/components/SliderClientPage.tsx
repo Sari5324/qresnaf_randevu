@@ -55,7 +55,7 @@ export default function SliderClientPage({
   }
 
   const deleteImage = async (imageId: string, imageName: string) => {
-    if (!confirm(`"${imageName}" görselini silmek istediğinizden emin misiniz?`)) {
+    if (!confirm(`&quot;${imageName}&quot; görselini silmek istediğinizden emin misiniz?`)) {
       return
     }
 
@@ -250,7 +250,7 @@ export default function SliderClientPage({
           <div className="text-center py-12">
             <Images className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz görsel yok</h3>
-            <p className="text-gray-500">İlk görseli eklemek için yukarıdaki "Yeni Görsel Ekle" butonuna tıklayın.</p>
+            <p className="text-gray-500">İlk görseli eklemek için yukarıdaki &quot;Yeni Görsel Ekle&quot; butonuna tıklayın.</p>
           </div>
         )}
       </div>

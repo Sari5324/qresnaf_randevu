@@ -16,8 +16,11 @@ export default async function HomePage() {
     orderBy: { order: 'asc' }
   })
 
-  // Get staff members
+  // Get staff members with work schedules
   const staff = await prisma.staff.findMany({
+    include: {
+      workSchedule: true
+    },
     orderBy: { order: 'asc' }
   })
 

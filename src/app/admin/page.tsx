@@ -5,7 +5,7 @@ import AdminNav from '../../components/AdminNav'
 import AdminFoot from '../../components/AdminFoot'
 import Link from 'next/link'
 import { prisma } from '../../lib/prisma'
-import { ChartNoAxesCombined, Settings, Calendar, UserCheck, Images, Clock } from 'lucide-react'
+import { Settings, Calendar, UserCheck, Images } from 'lucide-react'
 
 export default async function AdminDashboard() {
   // Get session
@@ -41,19 +41,6 @@ export default async function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="p-3 bg-blue-100 rounded-lg">
-                            <ChartNoAxesCombined className="w-6 h-6 text-blue-600" />
-                        </div>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Analizler</h3>
-                    <p className="text-gray-600 text-sm mb-4">Randevu ve ziyaret istatistikleri</p>
-                    <Link href="/admin/analytics" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
-                        Görüntüle
-                    </Link>
-                </div>
-
-                <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
-                    <div className="flex items-center justify-between mb-4">
                         <div className="p-3 bg-green-100 rounded-lg">
                             <Calendar className="w-6 h-6 text-green-600"/>
                         </div>
@@ -74,19 +61,6 @@ export default async function AdminDashboard() {
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Personel</h3>
                     <p className="text-gray-600 text-sm mb-4">Çalışan personel yönetimi</p>
                     <Link href="/admin/staff" className="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
-                        Görüntüle
-                    </Link>
-                </div>
-
-                <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="p-3 bg-orange-100 rounded-lg">
-                            <Clock className="w-6 h-6 text-orange-600"/>
-                        </div>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Mesai Saatleri</h3>
-                    <p className="text-gray-600 text-sm mb-4">Çalışma saatleri düzenleme</p>
-                    <Link href="/admin/schedules" className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
                 </div>
