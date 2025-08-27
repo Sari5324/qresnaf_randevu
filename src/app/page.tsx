@@ -25,51 +25,58 @@ export default async function HomePage() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header with Logo */}
-      <header className="bg-primary-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="flex items-center gap-2 sm:gap-4">
-            {/* Company Logo */}
+    <div className="min-h-screen bg-primary-300">
+      {/* Header Section - QR Design */}
+      <header className="shadow-xl bg-primary-50/75 backdrop-blur-xl border-b border-primary-100/20 z-50" >
+        <div className="text-center max-w-md mx-auto px-4 h-full flex flex-col justify-center">
+          
+          {/* Company Logo */}
+          <div className="mb-4">
             {siteSettings?.companyLogo ? (
               <img
                 src={siteSettings.companyLogo}
                 alt="Şirket Logosu"
-                className="w-12 h-12 sm:w-16 sm:h-16 object-contain rounded-lg shadow-sm"
+                className="object-contain rounded mx-auto"
+                style={{ width: '100px', height: '100px' }}
               />
             ) : (
               <img
-                src="https://qresnaf.com/private/assets/img/only_qr_logo.png"
-                alt="QResnaf Logo"
-                className="w-12 h-12 sm:w-16 sm:h-16 object-contain rounded-lg shadow-sm"
+                src="https://ornek-menu.qresnaf.com/_next/image?url=%2Fuploads%2F1755565506666-a2sa7xv05tc.png&w=256&q=75"
+                alt="QR Logo"
+                className="object-contain mx-auto"
+                style={{ width: '100px', height: '100px' }}
               />
             )}
-            {/* Company Name */}
-            <h1 className="text-2xl sm:text-4xl font-black text-black">
-              {siteSettings?.companyName || 'EsnaF'}
-            </h1>
           </div>
-          </div>
-          
+
+          {/* Company Name */}
+          <h1 className="text-2xl font-bold text-primary-800">
+            {siteSettings?.companyName || 'EsnaF'}
+          </h1>
+
+          {/* Description */}
           {siteSettings?.description && (
-            <p className="text-gray-600 text-sm mb-4 text-center px-4">
+            <p className="text-primary-950 text-sm mb-4 leading-relaxed px-4">
               {siteSettings.description}
             </p>
           )}
-          
-          {/* Navigation Button */}
-          <Link
-            href="/search"
-            className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg transition-colors text-sm sm:text-base"
-          >
-            <Search className="w-4 h-4" />
-            Randevu Sorgula
-          </Link>
+
+          {/* Randevu Sorgulama Button */}
+          <div className="flex justify-center">
+            <Link
+              href="/search"
+              className="inline-flex items-center justify-center gap-2 bg-primary-600 mb-1 hover:bg-primary-700 text-white font-semibold py-3 px-25 rounded-full transition-all duration-200 text-sm shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              
+            >
+              <Search className="w-4 h-4" />
+              <span>Randevu Sorgula</span>
+            </Link>
+          </div>
+
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Main Content - Appointment Form */}
       <ClientAppointmentPage 
         staff={staff} 
         sliderImages={sliderImages} 

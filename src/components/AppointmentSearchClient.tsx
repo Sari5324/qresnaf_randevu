@@ -282,7 +282,7 @@ export default function AppointmentSearchClient() {
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <User className="w-5 h-5 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Hasta Adı</p>
+                    <p className="text-sm font-medium text-gray-700">Randevu Alan</p>
                     <p className="text-gray-900">{appointment.customerName}</p>
                   </div>
                 </div>
@@ -298,7 +298,7 @@ export default function AppointmentSearchClient() {
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <User className="w-5 h-5 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Doktor/Personel</p>
+                    <p className="text-sm font-medium text-gray-700">Personel</p>
                     <p className="text-gray-900">{appointment.staff.name}</p>
                     {appointment.staff.title && (
                       <p className="text-sm text-gray-600">{appointment.staff.title}</p>

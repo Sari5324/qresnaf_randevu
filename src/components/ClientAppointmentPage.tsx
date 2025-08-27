@@ -62,6 +62,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
   const [error, setError] = useState('')
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [appointmentCode, setAppointmentCode] = useState('')
+  const [isCopied, setIsCopied] = useState(false)
   const [bookedSlots, setBookedSlots] = useState<{[key: string]: string[]}>({}) // {date: [times]}
   const [dateOffset, setDateOffset] = useState(0) // Kaç gün ileri/geri
   const [staffSchedule, setStaffSchedule] = useState<WorkSchedule[]>([]) // Seçili personelin çalışma programı
@@ -324,20 +325,14 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-4 sm:py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+    <main className="max-w-3xl mx-auto px-4 py-3 sm:py-3">
+      <div className="space-y-6">
         
-        {/* Left Column - Appointment Form */}
-        <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-8 order-1">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Randevu Al</h2>
+        {/* Appointment Form */}
+        <div className="bg-white rounded-xl shadow-md p-3 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Randevu Al</h2>
           
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                {error}
-              </div>
-            )}
-
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             {/* Name Field */}
             <div>
               <label className="block text-gray-600 font-medium mb-2 text-sm sm:text-base">İsim Soyisim</label>
@@ -470,7 +465,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                   </button>
                 </div>
               </div>
-              <div className="grid grid-cols-7 gap-1 sm:gap-2">
+              <div className="grid grid-cols-7 gap-1">
                 {generateDates().map((date, i) => {
                   const dateStr = date.toISOString().split('T')[0]
                   const isToday = dateStr === new Date().toISOString().split('T')[0]
@@ -482,7 +477,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                       type="button"
                       onClick={() => isAvailable && setSelectedDate(dateStr)}
                       disabled={!isAvailable}
-                      className={`p-3 border-2 rounded-xl transition-all duration-200 text-center hover:shadow-sm ${
+                      className={`p-2 border-2 rounded-xl transition-all duration-200 text-center hover:shadow-sm ${
                         !isAvailable
                           ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60'
                           : selectedDate === dateStr
@@ -512,7 +507,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                         {date.toLocaleDateString('tr-TR', { month: 'short' })}
                       </div>
                       {!isAvailable && (
-                        <div className="text-xs text-gray-400 font-medium mt-1">Çalışmıyor</div>
+                        <div className="text-xs text-gray-400 font-bold mt-1">✕</div>
                       )}
                       {isToday && isAvailable && (
                         <div className="text-xs text-orange-600 font-medium mt-1">Bugün</div>
@@ -585,6 +580,13 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
               )}
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                {error}
+              </div>
+            )}
+
             {/* Submit Button */}
             <button 
               type="submit"
@@ -596,16 +598,16 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
           </form>
         </div>
 
-        {/* Right Column - Staff Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-8 order-2">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Çalışmalarımız</h2>
+        {/* Staff Section */}
+        <div className="bg-white rounded-xl shadow-md p-3 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Çalışmalarımız</h2>
           
           {/* Modern Slider */}
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-3 sm:mb-4">
             {sliderImages.length > 0 ? (
-              <div className="relative w-full h-64 sm:h-80 lg:h-96 group">
+              <div className="relative w-full h-48 sm:h-60 lg:h-72 group">
                 {/* Main Image Container */}
-                <div className="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
+                <div className="relative w-full h-full overflow-hidden rounded-xl shadow-lg">
                   {/* Background Gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10" />
                   
@@ -698,12 +700,12 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                 )}
               </div>
             ) : (
-              <div className="relative w-full h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
+              <div className="relative w-full h-48 sm:h-60 lg:h-72 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <User className="w-8 h-8 text-gray-500" />
+                  <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <User className="w-6 h-6 text-gray-500" />
                   </div>
-                  <p className="text-gray-500 font-medium">Henüz görsel eklenmemiş</p>
+                  <p className="text-gray-500 font-medium text-sm">Henüz görsel eklenmemiş</p>
                 </div>
               </div>
             )}
@@ -743,16 +745,31 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
               <div className="flex gap-3">
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(appointmentCode)
-                    alert('Kod kopyalandı!')
+                    if (!isCopied) {
+                      navigator.clipboard.writeText(appointmentCode)
+                      setIsCopied(true)
+                    }
                   }}
-                  className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                  disabled={isCopied}
+                  className={`flex-1 font-medium py-2 px-4 rounded-lg transition-colors text-sm ${
+                    isCopied 
+                      ? 'text-green-600 cursor-default' 
+                      : 'bg-primary-600 hover:bg-primary-700 text-white'
+                  }`}
                 >
-                  Kopyala
+                  {isCopied ? (
+                    <span className="flex items-center justify-center gap-1">
+                      <span className="text-sm">✓</span>
+                      Kopyalandı
+                    </span>
+                  ) : (
+                    'Kopyala'
+                  )}
                 </button>
                 <button
                   onClick={() => {
                     setShowSuccessModal(false)
+                    setIsCopied(false)
                     router.push(`/search?code=${appointmentCode}`)
                   }}
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
@@ -763,7 +780,10 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
               
               {/* Close */}
               <button
-                onClick={() => setShowSuccessModal(false)}
+                onClick={() => {
+                  setShowSuccessModal(false)
+                  setIsCopied(false)
+                }}
                 className="w-full text-gray-500 text-sm mt-3 hover:text-gray-700 transition-colors"
               >
                 Kapat
