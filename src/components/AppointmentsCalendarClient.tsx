@@ -447,7 +447,7 @@ export default function AppointmentsCalendarClient({ appointments, staffList }: 
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Hasta
+                        Randevu Alan
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Personel
