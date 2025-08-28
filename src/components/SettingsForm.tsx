@@ -307,7 +307,7 @@ export default function SettingsForm({ settings }: SettingsFormProps) {
         {/* Business Number */}
         <div>
           <label htmlFor="businessNumber" className="block text-sm font-medium text-gray-700 mb-2">
-            İş Yeri Numarası 
+            İş Yeri Numarası (Bilgi Kartında Gözükecektir.)
           </label>
           <input
             type="text"

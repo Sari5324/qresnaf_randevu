@@ -25,10 +25,10 @@ export default async function HomePage() {
   })
 
   return (
-    <div className="min-h-screen bg-primary-300">
+    <div className="min-h-screen bg-primary-min-h-screen bg-radial-[at_50%_0%] from-primary-300 via-primary-200 to-primary-50">
       {/* Header Section - QR Design */}
       <header className="shadow-xl bg-primary-50/75 backdrop-blur-xl border-b border-primary-100/20 z-50" >
-        <div className="text-center max-w-md mx-auto px-4 h-full flex flex-col justify-center">
+        <div className="text-center max-w-md mx-auto px-4 py-4 h-full flex flex-col justify-center">
           
           {/* Company Logo */}
           <div className="mb-4">
