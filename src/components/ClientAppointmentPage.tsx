@@ -637,13 +637,13 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
 
                   {/* Click to View Overlay */}
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center">
-                    <div className="text-white text-center">
-                      <div className="bg-white/20 backdrop-blur-sm rounded-full w-12 h-12 flex items-center justify-center mb-2">
+                    <div className="text-white flex flex-col items-center justify-center">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-full w-12 h-12 flex items-center justify-center mb-2 mx-auto">
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M8 5v14l11-7z"/>
                         </svg>
                       </div>
-                      <p className="text-sm font-medium">Görüntülemek için tıklayın</p>
+                      <p className="text-sm font-medium text-center">Görüntülemek için tıklayın</p>
                     </div>
                   </div>
 
