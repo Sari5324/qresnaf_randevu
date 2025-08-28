@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers'
 import { parseSessionToken } from '@/lib/session'
 import { redirect } from 'next/navigation'
+import DailyCalendarClient from '@/components/DailyCalendarClient'
 import AdminNav from '@/components/AdminNav'
 import AdminFoot from '@/components/AdminFoot'
-import AppointmentsClient from '@/components/AppointmentsClient'
 import { prisma } from '@/lib/prisma'
 
 export default async function AdminAppointments() {
@@ -59,16 +59,9 @@ export default async function AdminAppointments() {
   }))
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50">
       <AdminNav />
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <AppointmentsClient 
-            appointments={transformedAppointments} 
-            staffList={staffList}
-          />
-        </div>
-      </main>
+      <DailyCalendarClient appointments={transformedAppointments} staffList={staffList} />
       <AdminFoot />
     </div>
   )
