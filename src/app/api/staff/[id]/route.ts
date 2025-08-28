@@ -83,7 +83,15 @@ export async function PUT(
       // Create new work schedules
       if (workSchedule && workSchedule.length > 0) {
         await tx.workSchedule.createMany({
-          data: workSchedule.map((schedule: any) => ({
+          data: workSchedule.map((schedule: {
+            dayOfWeek: string;
+            isWorking: boolean;
+            startTime?: string;
+            endTime?: string;
+            interval?: number;
+            breakStart?: string;
+            breakEnd?: string;
+          }) => ({
             staffId: id,
             dayOfWeek: schedule.dayOfWeek,
             isWorking: schedule.isWorking,

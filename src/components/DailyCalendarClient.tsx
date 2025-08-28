@@ -379,7 +379,7 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                                 {/* Notes - if any */}
                                 {appointment.notes && (
                                   <div className="mt-2 text-xs bg-white/10 rounded-lg px-2 py-1.5 opacity-90">
-                                    <span className="italic">"{appointment.notes}"</span>
+                                    <span className="italic">&ldquo;{appointment.notes}&rdquo;</span>
                                   </div>
                                 )}
                               </div>

@@ -40,12 +40,6 @@ export default function AppointmentForm({ staff }: AppointmentFormProps) {
 
   const timeSlots = generateTimeSlots()
 
-  // Get minimum date (today)
-  const getMinDate = () => {
-    const today = new Date()
-    return today.toISOString().split('T')[0]
-  }
-
   // Get next 30 days for date selection
   const getAvailableDates = () => {
     const dates = []

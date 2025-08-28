@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -20,6 +20,20 @@ export default function ModernSlider({ images }: ModernSliderProps) {
   const [isPlaying] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
 
+  const nextSlide = useCallback(() => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    setCurrentIndex((prev) => (prev + 1) % images.length)
+    setTimeout(() => setIsTransitioning(false), 300)
+  }, [isTransitioning, images.length])
+
+  const prevSlide = () => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
+    setTimeout(() => setIsTransitioning(false), 300)
+  }
+
   // Auto-play functionality
   useEffect(() => {
     if (!isPlaying || images.length <= 1) return
@@ -29,21 +43,7 @@ export default function ModernSlider({ images }: ModernSliderProps) {
     }, 5000) // 5 seconds
 
     return () => clearInterval(interval)
-  }, [isPlaying, currentIndex, images.length])
-
-  const nextSlide = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    setCurrentIndex((prev) => (prev + 1) % images.length)
-    setTimeout(() => setIsTransitioning(false), 300)
-  }
-
-  const prevSlide = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
-    setTimeout(() => setIsTransitioning(false), 300)
-  }
+  }, [isPlaying, currentIndex, images.length, nextSlide])
 
   const goToSlide = (index: number) => {
     if (isTransitioning || index === currentIndex) return

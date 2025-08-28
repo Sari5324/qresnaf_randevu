@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { User, ChevronRight, ChevronLeft, X, Play } from 'lucide-react'
+import { User, ChevronRight, ChevronLeft, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface Staff {

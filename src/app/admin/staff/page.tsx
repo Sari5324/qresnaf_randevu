@@ -6,7 +6,7 @@ import AdminFoot from '@/components/AdminFoot'
 import StaffDeleteButton from '@/components/StaffDeleteButton'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import { User, Plus, Edit, Clock, Calendar, Phone, Mail } from 'lucide-react'
+import { User, Plus, Edit, Clock, Phone, Mail } from 'lucide-react'
 
 export default async function AdminStaff() {
   // Get session
@@ -42,7 +42,6 @@ export default async function AdminStaff() {
   })
 
   const totalStaff = staff.length
-  const activeAppointments = staff.reduce((sum, s) => sum + s._count.appointments, 0)
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">

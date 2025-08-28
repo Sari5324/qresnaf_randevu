@@ -13,10 +13,7 @@ import {
   Filter,
   AlertCircle,
   CheckCircle,
-  XCircle,
-  ChevronLeft,
-  ChevronRight,
-  CalendarDays
+  XCircle
 } from 'lucide-react'
 
 interface Staff {
@@ -44,173 +41,13 @@ interface AppointmentsClientProps {
 export default function AppointmentsClient({ appointments, staffList }: AppointmentsClientProps) {
   const [statusFilter, setStatusFilter] = useState('')
   const [staffFilter, setStaffFilter] = useState('')
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [viewMode, setViewMode] = useState<'month' | 'week'>('month')
+  const [dateFilter, setDateFilter] = useState('')
 
-  // Get current month/year
-  const currentMonth = currentDate.getMonth()
-  const currentYear = currentDate.getFullYear()
-
-  // Helper functions
-  const getFirstDayOfMonth = () => {
-    return new Date(currentYear, currentMonth, 1)
-  }
-
-  const getLastDayOfMonth = () => {
-    return new Date(currentYear, currentMonth + 1, 0)
-  }
-
-  const getCalendarDays = () => {
-    const firstDay = getFirstDayOfMonth()
-    const lastDay = getLastDayOfMonth()
-    const startDate = new Date(firstDay)
-    const endDate = new Date(lastDay)
-    
-    // Start from Monday
-    startDate.setDate(startDate.getDate() - ((startDate.getDay() + 6) % 7))
-    // End on Sunday
-    endDate.setDate(endDate.getDate() + (6 - endDate.getDay()))
-
-    const days = []
-    const current = new Date(startDate)
-    
-    while (current <= endDate) {
-      days.push(new Date(current))
-      current.setDate(current.getDate() + 1)
-    }
-    
-    return days
-  }
-
-  // Filter appointments based on current filters
+  // Filter appointments based on current filters  
   const filteredAppointments = useMemo(() => {
     return appointments.filter(appointment => {
       // Status filter
       if (statusFilter && appointment.status !== statusFilter) {
-        return false
-      }
-      
-      // Staff filter
-      if (staffFilter && appointment.staff.name !== staffFilter) {
-        return false
-      }
-      
-      return true
-    })
-  }, [appointments, statusFilter, staffFilter])
-
-  // Group appointments by date
-  const appointmentsByDate = useMemo(() => {
-    const grouped: { [key: string]: Appointment[] } = {}
-    
-    filteredAppointments.forEach(appointment => {
-      const dateKey = appointment.date
-      if (!grouped[dateKey]) {
-        grouped[dateKey] = []
-      }
-      grouped[dateKey].push(appointment)
-    })
-    
-    return grouped
-  }, [filteredAppointments])
-
-  // Get stats
-  const stats = useMemo(() => {
-    const total = filteredAppointments.length
-    const pending = filteredAppointments.filter(a => a.status === 'PENDING').length
-    const confirmed = filteredAppointments.filter(a => a.status === 'CONFIRMED').length
-    const cancelled = filteredAppointments.filter(a => a.status === 'CANCELLED').length
-    const completed = filteredAppointments.filter(a => a.status === 'COMPLETED').length
-    
-    return { total, pending, confirmed, cancelled, completed }
-  }, [filteredAppointments])
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return 'text-yellow-700 bg-yellow-100'
-      case 'CONFIRMED':
-        return 'text-green-700 bg-green-100'
-      case 'CANCELLED':
-        return 'text-red-700 bg-red-100'
-      case 'COMPLETED':
-        return 'text-blue-700 bg-blue-100'
-      default:
-        return 'text-gray-700 bg-gray-100'
-    }
-  }
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return 'Bekliyor'
-      case 'CONFIRMED':
-        return 'Onaylandı'
-      case 'CANCELLED':
-        return 'İptal'
-      case 'COMPLETED':
-        return 'Tamamlandı'
-      default:
-        return status
-    }
-  }
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return <AlertCircle className="w-3 h-3" />
-      case 'CONFIRMED':
-        return <CheckCircle className="w-3 h-3" />
-      case 'CANCELLED':
-        return <XCircle className="w-3 h-3" />
-      case 'COMPLETED':
-        return <CheckCircle className="w-3 h-3" />
-      default:
-        return <AlertCircle className="w-3 h-3" />
-    }
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('tr-TR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-  }
-
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    const newDate = new Date(currentDate)
-    if (direction === 'prev') {
-      newDate.setMonth(newDate.getMonth() - 1)
-    } else {
-      newDate.setMonth(newDate.getMonth() + 1)
-    }
-    setCurrentDate(newDate)
-  }
-
-  const getDayAppointments = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0]
-    return appointmentsByDate[dateStr] || []
-  }
-
-  const isCurrentMonth = (date: Date) => {
-    return date.getMonth() === currentMonth
-  }
-
-  const isToday = (date: Date) => {
-    const today = new Date()
-    return date.toDateString() === today.toDateString()
-  }
-
-  const monthNames = [
-    'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
-  ]
-
-  const dayNames = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
-
-  return (
         return false
       }
       
@@ -288,7 +125,7 @@ export default function AppointmentsClient({ appointments, staffList }: Appointm
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Yeni fatih
+            Yeni Randevu
           </Link>
         </div>
       </div>
