@@ -45,7 +45,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 403 })
     }
 
-    const { companyName, description, themeColor, themeFont, companyLogo, darkMode } = await request.json()
+    const { companyName, description, themeColor, themeFont, companyLogo, darkMode, businessNumber } = await request.json()
 
     // Validation
     if (!companyName || companyName.trim().length === 0) {
@@ -101,6 +101,7 @@ export async function PUT(request: NextRequest) {
           themeColor: themeColor || '#3B82F6',
           themeFont: themeFont || 'inter',
           companyLogo: companyLogo?.trim() || null,
+          businessNumber: businessNumber?.trim() || null,
           ...(typeof darkMode === 'boolean' && { darkMode }),
         }
       })
@@ -113,6 +114,7 @@ export async function PUT(request: NextRequest) {
           themeColor: themeColor || '#3B82F6',
           themeFont: themeFont || 'inter',
           companyLogo: companyLogo?.trim() || null,
+          businessNumber: businessNumber?.trim() || null,
           ...(typeof darkMode === 'boolean' && { darkMode }),
         }
       })

@@ -6,6 +6,10 @@ import AdminFoot from '@/components/AdminFoot'
 import { prisma } from '@/lib/prisma'
 import SettingsForm from '@/components/SettingsForm'
 
+// Disable caching for this page
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function SettingsPage() {
   // Get session
   const cookieStore = await cookies()

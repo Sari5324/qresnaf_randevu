@@ -14,7 +14,7 @@ export default async function AppointmentSearchPage() {
       } as React.CSSProperties}
       className={`${siteSettings?.themeFont || 'inter'} ${siteSettings?.darkMode ? 'dark' : ''}`}
     >
-      <AppointmentSearchClient />
+      <AppointmentSearchClient siteSettings={siteSettings} />
     </div>
   )
 }

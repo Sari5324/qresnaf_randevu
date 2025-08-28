@@ -283,7 +283,7 @@ export default function StaffForm({ initialData }: StaffFormProps) {
               </div>
 
               {workSchedule[index].isWorking && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       Başlangıç
@@ -306,6 +306,20 @@ export default function StaffForm({ initialData }: StaffFormProps) {
                       onChange={(e) => handleScheduleChange(index, 'endTime', e.target.value)}
                       className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Randevu Aralığı
+                    </label>
+                    <select
+                      value={workSchedule[index].interval}
+                      onChange={(e) => handleScheduleChange(index, 'interval', parseInt(e.target.value))}
+                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value={30}>30 dakika</option>
+                      <option value={60}>1 saat</option>
+                    </select>
                   </div>
 
                   <div>

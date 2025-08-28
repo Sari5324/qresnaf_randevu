@@ -10,17 +10,24 @@ export function middleware(request: NextRequest) {
   
   // Protect admin routes for appointment system
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    // Skip middleware for login page
-    if (request.nextUrl.pathname === '/admin/login') {
+    // Skip middleware for login page and API routes
+    if (request.nextUrl.pathname === '/admin/login' || 
+        request.nextUrl.pathname.startsWith('/api/')) {
       return response
     }
 
-    const session = getSessionFromRequest(request)
-    
-    if (!session || session.role !== 'ADMIN') {
-      // Environment variable'dan base URL'i al
-      const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin
-      return NextResponse.redirect(new URL('/admin/login', baseUrl))
+    try {
+      const session = getSessionFromRequest(request)
+      
+      if (!session || session.role !== 'ADMIN') {
+        console.log('No valid session, redirecting to login')
+        const loginUrl = new URL('/admin/login', request.url)
+        return NextResponse.redirect(loginUrl)
+      }
+    } catch (error) {
+      console.error('Middleware session error:', error)
+      const loginUrl = new URL('/admin/login', request.url)
+      return NextResponse.redirect(loginUrl)
     }
   }
 

@@ -89,9 +89,11 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
   // Generate 7 days starting from dateOffset
   const generateDates = () => {
     const dates = []
+    const today = new Date()
+    
     for (let i = 0; i < 7; i++) {
-      const date = new Date()
-      date.setDate(date.getDate() + dateOffset + i)
+      const date = new Date(today) // Her iterasyonda bugünün kopyasından başla
+      date.setDate(today.getDate() + dateOffset + i)
       dates.push(date)
     }
     return dates
@@ -107,14 +109,9 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
     // Find staff from the existing staff list since it already includes workSchedule
     const selectedStaff = staff.find(member => member.id === staffId)
     
-    console.log('Selected staff:', selectedStaff)
-    console.log('Staff workSchedule:', selectedStaff?.workSchedule)
-    
     if (selectedStaff?.workSchedule) {
-      console.log('Setting staff schedule:', selectedStaff.workSchedule)
       setStaffSchedule(selectedStaff.workSchedule)
     } else {
-      console.log('No workSchedule found for staff:', selectedStaff)
       setStaffSchedule([])
     }
   }, [staff])
@@ -403,10 +400,11 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
               
               {/* Staff Schedule Info */}
               {formData.staffId && staffSchedule.length > 0 && (
-                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <h4 className="text-sm font-medium text-blue-900 mb-2">Çalışma Saatleri</h4>
+                <div className="mt-3 p-3 bg-primary-50 border border-primary-200 rounded-lg">
+                  <h4 className="text-sm font-medium text-primary-700 mb-2">Çalışma Saatleri</h4>
                   <div className="grid grid-cols-1 gap-1 text-xs">
                     {staffSchedule
+                      .filter(schedule => schedule.isWorking) // Sadece çalışma günlerini göster
                       .sort((a, b) => {
                         // Gün sıralaması: Pazartesi'den Pazar'a
                         const dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
@@ -425,13 +423,15 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                         
                         return (
                           <div key={schedule.dayOfWeek} className="flex justify-between items-center">
-                            <span className="text-blue-700">{dayNames[schedule.dayOfWeek as keyof typeof dayNames]}</span>
-                            <span className={`font-medium ${schedule.isWorking ? 'text-blue-900' : 'text-gray-500'}`}>
-                              {schedule.isWorking 
-                                ? `${schedule.startTime} - ${schedule.endTime}` 
-                                : 'Çalışmıyor'
-                              }
-                            </span>
+                            <span className="text-primary-700">{dayNames[schedule.dayOfWeek as keyof typeof dayNames]}</span>
+                            <div className="text-right">
+                              <div className="font-medium text-primary-700">
+                                {schedule.startTime} - {schedule.endTime}
+                              </div>
+                              <div className="text-xs text-primary-500">
+                                Randevu: {schedule.interval === 60 ? '1 saat' : '30 dk'}
+                              </div>
+                            </div>
                           </div>
                         )
                       })}
@@ -467,8 +467,15 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
               </div>
               <div className="grid grid-cols-7 gap-1">
                 {generateDates().map((date, i) => {
-                  const dateStr = date.toISOString().split('T')[0]
-                  const isToday = dateStr === new Date().toISOString().split('T')[0]
+                  // Local tarih formatı kullan (UTC timezone sorunu önlemek için)
+                  const year = date.getFullYear()
+                  const month = String(date.getMonth() + 1).padStart(2, '0')
+                  const day = String(date.getDate()).padStart(2, '0')
+                  const dateStr = `${year}-${month}-${day}`
+                  
+                  const today = new Date()
+                  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+                  const isToday = dateStr === todayStr
                   const isAvailable = isDateAvailable(date)
                   
                   return (

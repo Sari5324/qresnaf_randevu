@@ -17,6 +17,19 @@ import {
   Loader2
 } from 'lucide-react'
 
+interface SiteSettings {
+  id: string
+  companyName: string
+  companyLogo: string | null
+  businessNumber: string | null
+  description: string | null
+  themeColor: string
+  themeFont: string
+  darkMode: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
 interface Appointment {
   id: string
   code: string
@@ -32,7 +45,7 @@ interface Appointment {
   }
 }
 
-export default function AppointmentSearchClient() {
+export default function AppointmentSearchClient({ siteSettings }: { siteSettings: SiteSettings | null }) {
   const searchParams = useSearchParams()
   const [searchCode, setSearchCode] = useState('')
   const [appointment, setAppointment] = useState<Appointment | null>(null)
@@ -358,10 +371,17 @@ export default function AppointmentSearchClient() {
         <div className="mt-6 bg-primary-50 border border-primary-100 rounded-lg p-4">
           <h4 className="font-semibold text-primary-800 mb-2">Bilgi</h4>
           <ul className="text-sm text-primary-700 space-y-1">
-            <li>• Randevu kodunuzu güvenli bir yerde saklayınız</li>
-            <li>• Sadece bekleyen randevular iptal edilebilir</li>
-            <li>• Onaylanan randevular için klinĭği arayınız</li>
+            <li>• Randevu kodunuzu güvenli bir yerde saklayınız.</li>
+            <li>• Sadece bekleyen randevular iptal edilebilir.</li>
+            <li>• Onaylanan randevular için iş yerini arayınız.</li>
           </ul>
+          {siteSettings?.businessNumber && (
+            <div className="mt-3 pt-3 border-t border-primary-200">
+              <p className="text-sm text-primary-700">
+                <span className="font-medium">İş Yeri Numarası:</span> {siteSettings.businessNumber}
+              </p>
+            </div>
+          )}
         </div>
       </main>
     </div>

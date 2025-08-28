@@ -83,6 +83,7 @@ model SiteSettings {
   id          String   @id @default(cuid())
   companyName String   @default("Sanal Randevu")
   companyLogo String?
+  businessNumber String?
   description String?
   themeColor  String   @default("#3B82F6")
   themeFont   String   @default("inter")

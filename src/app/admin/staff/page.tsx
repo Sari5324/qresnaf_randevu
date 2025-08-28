@@ -165,11 +165,20 @@ export default async function AdminStaff() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Clock className="w-4 h-4 text-gray-400 mr-2" />
-                          <span className="text-sm text-gray-500">
-                            {member.workSchedule.length > 0 ? `${member.workSchedule.length} Gün` : 'Ayarlanmamış'}
-                          </span>
+                        <div className="flex flex-col">
+                          <div className="flex items-center">
+                            <Clock className="w-4 h-4 text-gray-400 mr-2" />
+                            <span className="text-sm text-gray-500">
+                              {member.workSchedule.length > 0 ? `${member.workSchedule.length} Gün` : 'Ayarlanmamış'}
+                            </span>
+                          </div>
+                          {member.workSchedule.length > 0 && (
+                            <div className="mt-1">
+                              <span className="text-xs text-gray-400">
+                                Randevu: {member.workSchedule[0]?.interval === 60 ? '1 saat' : '30 dk'}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

@@ -1,22 +1,8 @@
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
-import { parseSessionToken } from '@/lib/session'
 import LoginForm from '@/components/LoginForm'
 import AdminFoot from '@/components/AdminFoot'
 import Image from 'next/image'
 
 export default async function AdminLoginPage() {
-  // Check if user is already logged in
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('session')?.value
-  
-  if (sessionCookie) {
-    const session = parseSessionToken(sessionCookie)
-    if (session && session.role === 'ADMIN') {
-      redirect('/admin')
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <div className="flex-grow flex flex-col justify-center py-12">
@@ -28,7 +14,7 @@ export default async function AdminLoginPage() {
             <div className="text-center">
               <h2 className="text-3xl font-bold text-gray-900">Yönetici Girişi</h2>
               <p className="mt-2 text-sm text-gray-600">
-                Sanal Menü yönetim paneline erişim
+                Sanal Randevu yönetim paneline erişim
               </p>
             </div>
           </div>

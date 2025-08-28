@@ -10,6 +10,7 @@ interface SiteSettings {
   description: string | null
   themeColor: string
   themeFont: string
+  businessNumber: string | null
   darkMode: boolean
   createdAt: Date
   updatedAt: Date
@@ -29,23 +30,28 @@ export default function SettingsForm({ settings }: SettingsFormProps) {
     themeColor: settings?.themeColor || '#3B82F6',
     themeFont: settings?.themeFont || 'inter',
     companyLogo: settings?.companyLogo || '',
-    darkMode: settings?.darkMode || false
+    darkMode: settings?.darkMode || false,
+    businessNumber: settings?.businessNumber || ''
   })
   const [errors, setErrors] = useState<{[key: string]: string}>({})
 
-  // Update form data when settings prop changes
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  // Update form data when settings prop changes - only on first load
   useEffect(() => {
-    if (settings) {
+    if (settings && !isInitialized) {
       setFormData({
         companyName: settings.companyName || 'Sanal Menü',
         description: settings.description || '',
         themeColor: settings.themeColor || '#3B82F6',
         themeFont: settings.themeFont || 'inter',
         companyLogo: settings.companyLogo || '',
-        darkMode: settings.darkMode || false
+        darkMode: settings.darkMode || false,
+        businessNumber: settings.businessNumber || ''
       })
+      setIsInitialized(true)
     }
-  }, [settings])
+  }, [settings, isInitialized])
   const handleFileSelect = (files: File | File[] | null) => {
     const file = Array.isArray(files) ? files[0] : files
     // Clean up previous preview URL
@@ -138,10 +144,37 @@ export default function SettingsForm({ settings }: SettingsFormProps) {
       })
 
       if (response.ok) {
-        // Force hard reload to clear browser cache for theme changes
-        const url = new URL(window.location.href)
-        url.searchParams.set('t', Date.now().toString())
-        window.location.href = url.toString()
+        const updatedSettings = await response.json()
+        
+        // Update form data with the saved values
+        setFormData({
+          companyName: updatedSettings.companyName || 'Sanal Randevu',
+          description: updatedSettings.description || '',
+          themeColor: updatedSettings.themeColor || '#3B82F6',
+          themeFont: updatedSettings.themeFont || 'inter',
+          companyLogo: updatedSettings.companyLogo || '',
+          darkMode: updatedSettings.darkMode || false,
+          businessNumber: updatedSettings.businessNumber || ''
+        })
+        
+        // Clear selected file and preview
+        setSelectedFile(null)
+        setPreviewUrl(null)
+        
+        // Show success message
+        alert('Ayarlar başarıyla güncellendi!')
+        
+        // Only reload if theme changed to apply CSS changes
+        // Temporarily disabled for testing
+        /*
+        if (updatedSettings.themeColor !== settings?.themeColor || 
+            updatedSettings.themeFont !== settings?.themeFont ||
+            updatedSettings.darkMode !== settings?.darkMode) {
+          setTimeout(() => {
+            window.location.reload()
+          }, 1000)
+        }
+        */
       } else {
         const errorData = await response.json()
         setErrors(errorData.errors || { general: 'Bir hata oluştu' })
@@ -255,7 +288,7 @@ export default function SettingsForm({ settings }: SettingsFormProps) {
         {/* Description */}
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-            Şirket Açıklaması (Opsiyonel)
+            Şirket Açıklaması 
           </label>
           <textarea
             id="description"
@@ -268,6 +301,25 @@ export default function SettingsForm({ settings }: SettingsFormProps) {
           />
           {errors.description && (
             <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+          )}
+        </div>
+
+        {/* Business Number */}
+        <div>
+          <label htmlFor="businessNumber" className="block text-sm font-medium text-gray-700 mb-2">
+            İş Yeri Numarası 
+          </label>
+          <input
+            type="text"
+            id="businessNumber"
+            name="businessNumber"
+            value={formData.businessNumber}
+            onChange={handleInputChange}
+            className="block w-full px-3 py-2 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+            placeholder="İş yeri numarasını girin"
+          />
+          {errors.businessNumber && (
+            <p className="mt-1 text-sm text-red-600">{errors.businessNumber}</p>
           )}
         </div>
 
