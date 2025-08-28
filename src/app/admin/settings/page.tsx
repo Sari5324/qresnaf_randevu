@@ -53,6 +53,7 @@ export default async function SettingsPage() {
               description: siteSettings.description,
               themeColor: siteSettings.themeColor,
               themeFont: siteSettings.themeFont,
+              businessNumber: siteSettings.businessNumber,
               darkMode: Boolean((siteSettings as { darkMode?: boolean }).darkMode),
               createdAt: siteSettings.createdAt,
               updatedAt: siteSettings.updatedAt
