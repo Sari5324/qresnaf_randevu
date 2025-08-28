@@ -57,7 +57,7 @@ export default async function AdminStaff() {
               </div>
               <Link
                 href="/admin/staff/new"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Yeni Personel
@@ -69,24 +69,12 @@ export default async function AdminStaff() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
               <div className="flex items-center">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <User className="w-6 h-6 text-blue-600" />
+                <div className="p-3 bg-purple-100 rounded-lg">
+                  <User className="w-6 h-6 text-purple-600" />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Toplam Personel</p>
                   <p className="text-2xl font-bold text-gray-900">{totalStaff}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
-              <div className="flex items-center">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <Calendar className="w-6 h-6 text-green-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Aktif Randevular</p>
-                  <p className="text-2xl font-bold text-gray-900">{activeAppointments}</p>
                 </div>
               </div>
             </div>
@@ -128,8 +116,8 @@ export default async function AdminStaff() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                              <User className="w-5 h-5 text-blue-600" />
+                            <div className="h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
+                              <User className="w-5 h-5 text-purple-600" />
                             </div>
                           </div>
                           <div className="ml-4">
@@ -160,7 +148,7 @@ export default async function AdminStaff() {
                         {member.order}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
                           {member._count.appointments} Randevu
                         </span>
                       </td>
@@ -185,7 +173,7 @@ export default async function AdminStaff() {
                         <div className="flex space-x-2">
                           <Link
                             href={`/admin/staff/${member.id}/edit`}
-                            className="text-blue-600 hover:text-blue-900 flex items-center"
+                            className="text-purple-600 hover:text-purple-900 flex items-center"
                           >
                             <Edit className="w-4 h-4 mr-1" />
                             Düzenle
@@ -209,7 +197,7 @@ export default async function AdminStaff() {
                 <p className="text-gray-500 mb-4">İlk personeli eklemek için aşağıdaki butona tıklayın.</p>
                 <Link
                   href="/admin/staff/new"
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Yeni Personel Ekle

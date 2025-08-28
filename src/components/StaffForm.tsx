@@ -364,7 +364,7 @@ export default function StaffForm({ initialData }: StaffFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          className="bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors"
         >
           <Save className="w-4 h-4" />
           {loading ? 'Kaydediliyor...' : initialData?.id ? 'Güncelle' : 'Kaydet'}

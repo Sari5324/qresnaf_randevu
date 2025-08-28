@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface SliderImage {
   id: string
@@ -17,7 +17,7 @@ interface ModernSliderProps {
 
 export default function ModernSlider({ images }: ModernSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(true)
+  const [isPlaying] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
 
   // Auto-play functionality
@@ -103,59 +103,35 @@ export default function ModernSlider({ images }: ModernSliderProps) {
         </div>
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Her zaman görünür, daha küçük ve sade */}
       {images.length > 1 && (
         <>
           <button
             onClick={prevSlide}
             disabled={isTransitioning}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 
-                     bg-white/90 hover:bg-white text-gray-800 
-                     w-10 h-10 sm:w-12 sm:h-12 rounded-full 
-                     flex items-center justify-center shadow-lg
-                     transition-all duration-200 hover:scale-110
-                     backdrop-blur-sm border border-white/20
-                     opacity-0 group-hover:opacity-100"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-30 
+                     bg-white/80 hover:bg-white text-gray-800 
+                     w-8 h-8 rounded-full 
+                     flex items-center justify-center shadow-md
+                     transition-all duration-200 hover:scale-105
+                     backdrop-blur-sm border border-white/30"
           >
-            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
           
           <button
             onClick={nextSlide}
             disabled={isTransitioning}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 
-                     bg-white/90 hover:bg-white text-gray-800 
-                     w-10 h-10 sm:w-12 sm:h-12 rounded-full 
-                     flex items-center justify-center shadow-lg
-                     transition-all duration-200 hover:scale-110
-                     backdrop-blur-sm border border-white/20
-                     opacity-0 group-hover:opacity-100"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-30 
+                     bg-white/80 hover:bg-white text-gray-800 
+                     w-8 h-8 rounded-full 
+                     flex items-center justify-center shadow-md
+                     transition-all duration-200 hover:scale-105
+                     backdrop-blur-sm border border-white/30"
           >
-            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </>
-      )}
-
-      {/* Controls */}
-      {images.length > 1 && (
-        <div className="absolute top-4 right-4 z-30">
-          {/* Play/Pause Button */}
-          <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="bg-white/90 hover:bg-white text-gray-800 
-                     w-8 h-8 sm:w-10 sm:h-10 rounded-full 
-                     flex items-center justify-center shadow-lg
-                     transition-all duration-200 hover:scale-110
-                     backdrop-blur-sm border border-white/20
-                     opacity-0 group-hover:opacity-100"
-          >
-            {isPlaying ? (
-              <Pause className="w-4 h-4 sm:w-5 sm:h-5" />
-            ) : (
-              <Play className="w-4 h-4 sm:w-5 sm:h-5" />
-            )}
-          </button>
-        </div>
       )}
 
       {/* Dots Indicator */}

@@ -44,7 +44,7 @@ export default async function EditStaff({ params }: { params: Promise<{ id: stri
           <div className="mb-8">
             <Link
               href="/admin/staff"
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-4"
+              className="inline-flex items-center text-purple-600 hover:text-purple-800 mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Personel Listesine Dön

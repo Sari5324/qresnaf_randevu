@@ -67,13 +67,13 @@ export default async function AdminDashboard() {
 
                 <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="p-3 bg-pink-100 rounded-lg">
-                            <Images className="w-6 h-6 text-pink-600"/>
+                        <div className="p-3 bg-blue-100 rounded-lg">
+                            <Images className="w-6 h-6 text-blue-600"/>
                         </div>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Slider Görselleri</h3>
                     <p className="text-gray-600 text-sm mb-4">Ana sayfa slider yönetimi</p>
-                    <Link href="/admin/slider" className="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
+                    <Link href="/admin/slider" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
                 </div>

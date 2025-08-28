@@ -122,7 +122,7 @@ export default function AppointmentsClient({ appointments, staffList }: Appointm
           </div>
           <Link
             href="/admin/appointments/new"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             <Plus className="w-4 h-4 mr-2" />
             Yeni Randevu
@@ -272,7 +272,7 @@ export default function AppointmentsClient({ appointments, staffList }: Appointm
                       <div className="flex items-center space-x-2">
                         <Link
                           href={`/admin/appointments/${appointment.id}/edit`}
-                          className="text-blue-600 hover:text-blue-900 flex items-center"
+                          className="text-green-600 hover:text-green-900 flex items-center"
                         >
                           <Edit className="w-4 h-4 mr-1" />
                           Düzenle

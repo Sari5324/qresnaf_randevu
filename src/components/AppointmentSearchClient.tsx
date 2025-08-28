@@ -186,80 +186,107 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-lg border-b border-primary-100">
-        <div className="max-w-md mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
+    <div className="min-h-screen">
+      {/* Header Section - QR Design (Same as homepage) */}
+      <header className="shadow-xl bg-primary-50/75 backdrop-blur-xl border-b border-primary-100/20 z-50 relative">
+        <div className="text-center max-w-md mx-auto px-4 py-4 h-full flex flex-col justify-center">
+          
+          {/* Back Button - Daha görünür ve erişilebilir */}
+          <div className="absolute top-3 left-3 z-10">
             <Link
               href="/"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl p-3 rounded-xl transition-all duration-200 border border-primary-100/50 backdrop-blur-sm transform hover:-translate-y-0.5"
             >
-              <ArrowLeft className="w-6 h-6 text-gray-600" />
+              <ArrowLeft className="w-5 h-5 text-primary-600" />
+              <span className="text-sm font-medium text-primary-700">Geri</span>
             </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-800">
-                Randevu Sorgula
-              </h1>
-              <p className="text-sm text-gray-600">
-                Randevu kodunuzla bilgilerinizi görüntüleyin
-              </p>
-            </div>
           </div>
+
+          {/* Company Logo */}
+          <div className="mb-4">
+            {siteSettings?.companyLogo ? (
+              <img
+                src={siteSettings.companyLogo}
+                alt="Şirket Logosu"
+                className="object-contain rounded mx-auto"
+                style={{ width: '100px', height: '100px' }}
+              />
+            ) : (
+              <img
+                src="https://ornek-menu.qresnaf.com/_next/image?url=%2Fuploads%2F1755565506666-a2sa7xv05tc.png&w=256&q=75"
+                alt="QR Logo"
+                className="object-contain mx-auto"
+                style={{ width: '100px', height: '100px' }}
+              />
+            )}
+          </div>
+
+          {/* Company Name */}
+          <h1 className="text-2xl font-bold text-primary-800">
+            {siteSettings?.companyName || 'EsnaF'}
+          </h1>
+
+          {/* Page Title */}
+          <p className="text-primary-950 text-sm mb-4 leading-relaxed px-4">
+            Randevu Sorgulama
+          </p>
+
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-md mx-auto px-4 py-6">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6">
         {/* Success Message */}
         {success && (
-          <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-center gap-2">
+          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-2 shadow-sm">
             <CheckCircle className="w-5 h-5" />
             {success}
           </div>
         )}
 
-        {/* Search Form */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-6">
-          <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-4">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Search className="w-5 h-5" />
-              Randevu Kodu
-            </h2>
-            <p className="text-primary-100 text-sm mt-1">
+        {/* Search Form - Ana sayfa tasarım stili */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-primary-100/50 overflow-hidden">
+          <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-6">
+            <div className="flex items-center gap-3 mb-2">
+              <Search className="w-6 h-6 text-white" />
+              <h2 className="text-xl font-bold text-white">
+                Randevu Kodu
+              </h2>
+            </div>
+            <p className="text-primary-100 text-sm">
               6 haneli randevu kodunuzu giriniz
             </p>
           </div>
           
-          <div className="p-4">
+          <div className="p-6">
             <form onSubmit={handleSearch} className="space-y-4">
               <div>
                 <input
                   type="text"
                   value={searchCode}
                   onChange={(e) => setSearchCode(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-center text-lg font-mono"
+                  className="w-full px-6 py-4 border-2 border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-center text-xl font-mono bg-primary-50/50"
                   placeholder="123456"
                   maxLength={6}
                 />
                 {error && (
-                  <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
+                  <p className="text-red-500 text-sm mt-3 text-center bg-red-50 py-2 px-4 rounded-lg">{error}</p>
                 )}
               </div>
               
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
+                className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <Loader2 className="w-6 h-6 animate-spin" />
                     Aranıyor...
                   </>
                 ) : (
                   <>
-                    <Search className="w-5 h-5" />
+                    <Search className="w-6 h-6" />
                     Randevu Ara
                   </>
                 )}
@@ -268,23 +295,26 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
           </div>
         </div>
 
-        {/* Appointment Details */}
+        {/* Appointment Details - Ana sayfa tasarım stili */}
         {appointment && (
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-green-600 to-green-700 p-4">
-              <h3 className="text-lg font-bold text-white">
-                Randevu Bilgileri
-              </h3>
-              <p className="text-green-100 text-sm mt-1">
-                Kod: {appointment.code}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-primary-100/50 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-600 to-green-700 p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <CheckCircle className="w-6 h-6 text-white" />
+                <h3 className="text-xl font-bold text-white">
+                  Randevu Bilgileri
+                </h3>
+              </div>
+              <p className="text-green-100 text-sm">
+                Kod: <span className="font-mono font-bold">{appointment.code}</span>
               </p>
             </div>
             
-            <div className="p-4 space-y-4">
+            <div className="p-6 space-y-4">
               {/* Status */}
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700">Durum</span>
-                <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(appointment.status)}`}>
+              <div className="flex items-center justify-between p-4 bg-primary-50/50 rounded-xl border border-primary-100">
+                <span className="text-sm font-semibold text-primary-700">Durum</span>
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold ${getStatusColor(appointment.status)}`}>
                   {getStatusIcon(appointment.status)}
                   {getStatusText(appointment.status)}
                 </div>
@@ -292,53 +322,63 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
 
               {/* Customer Info */}
               <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <User className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Randevu Alan</p>
-                    <p className="text-gray-900">{appointment.customerName}</p>
+                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <User className="w-5 h-5 text-primary-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-primary-700">Randevu Alan</p>
+                    <p className="text-primary-900 font-medium">{appointment.customerName}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Phone className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Telefon</p>
-                    <p className="text-gray-900">{appointment.customerPhone}</p>
+                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <Phone className="w-5 h-5 text-primary-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-primary-700">Telefon</p>
+                    <p className="text-primary-900 font-medium">{appointment.customerPhone}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <User className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Personel</p>
-                    <p className="text-gray-900">{appointment.staff.name}</p>
+                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <User className="w-5 h-5 text-primary-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-primary-700">Personel</p>
+                    <p className="text-primary-900 font-medium">{appointment.staff.name}</p>
                     {appointment.staff.title && (
-                      <p className="text-sm text-gray-600">{appointment.staff.title}</p>
+                      <p className="text-sm text-primary-600">{appointment.staff.title}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Calendar className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Tarih</p>
-                    <p className="text-gray-900">{formatDate(appointment.date)}</p>
+                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <Calendar className="w-5 h-5 text-primary-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-primary-700">Tarih</p>
+                    <p className="text-primary-900 font-medium">{formatDate(appointment.date)}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Clock className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Saat</p>
-                    <p className="text-gray-900">{appointment.time}</p>
+                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <Clock className="w-5 h-5 text-primary-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-primary-700">Saat</p>
+                    <p className="text-primary-900 font-medium">{appointment.time}</p>
                   </div>
                 </div>
 
                 {appointment.notes && (
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm font-medium text-gray-700 mb-1">Notlar</p>
-                    <p className="text-gray-900">{appointment.notes}</p>
+                  <div className="p-4 bg-primary-50/50 rounded-xl border border-primary-100">
+                    <p className="text-sm font-semibold text-primary-700 mb-2">Notlar</p>
+                    <p className="text-primary-900">{appointment.notes}</p>
                   </div>
                 )}
               </div>
@@ -348,16 +388,16 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
                 <button
                   onClick={cancelAppointment}
                   disabled={cancelLoading}
-                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 mt-6"
+                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 mt-6"
                 >
                   {cancelLoading ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <Loader2 className="w-6 h-6 animate-spin" />
                       İptal Ediliyor...
                     </>
                   ) : (
                     <>
-                      <Trash2 className="w-5 h-5" />
+                      <Trash2 className="w-6 h-6" />
                       Randevuyu İptal Et
                     </>
                   )}
@@ -365,21 +405,39 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
               )}
             </div>
           </div>
-        )}
-
-        {/* Info */}
-        <div className="mt-6 bg-primary-50 border border-primary-100 rounded-lg p-4">
-          <h4 className="font-semibold text-primary-800 mb-2">Bilgi</h4>
-          <ul className="text-sm text-primary-700 space-y-1">
-            <li>• Randevu kodunuzu güvenli bir yerde saklayınız.</li>
-            <li>• Sadece bekleyen randevular iptal edilebilir.</li>
-            <li>• Onaylanan randevular için iş yerini arayınız.</li>
+        )}        {/* Info - Ana sayfa tasarım stili */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-primary-100/50 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-primary-100 rounded-lg">
+              <AlertCircle className="w-5 h-5 text-primary-600" />
+            </div>
+            <h4 className="font-bold text-primary-800 text-lg">Önemli Bilgiler</h4>
+          </div>
+          <ul className="text-sm text-primary-700 space-y-2">
+            <li className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 bg-primary-400 rounded-full mt-2 flex-shrink-0"></span>
+              Randevu kodunuzu güvenli bir yerde saklayınız.
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 bg-primary-400 rounded-full mt-2 flex-shrink-0"></span>
+              Sadece bekleyen randevular iptal edilebilir.
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 bg-primary-400 rounded-full mt-2 flex-shrink-0"></span>
+              Onaylanan randevular için iş yerini arayınız.
+            </li>
           </ul>
           {siteSettings?.businessNumber && (
-            <div className="mt-3 pt-3 border-t border-primary-200">
-              <p className="text-sm text-primary-700">
-                <span className="font-medium">İş Yeri Numarası:</span> {siteSettings.businessNumber}
-              </p>
+            <div className="mt-4 pt-4 border-t border-primary-200">
+              <div className="flex items-center gap-3 p-3 bg-primary-50 rounded-xl">
+                <div className="p-2 bg-primary-100 rounded-lg">
+                  <Phone className="w-4 h-4 text-primary-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-primary-700">İş Yeri Numarası</p>
+                  <p className="text-primary-900 font-mono font-bold">{siteSettings.businessNumber}</p>
+                </div>
+              </div>
             </div>
           )}
         </div>
