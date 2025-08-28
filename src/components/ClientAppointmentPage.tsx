@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { User, ChevronRight, ChevronLeft } from 'lucide-react'
+import { User, ChevronRight, ChevronLeft, X, Play } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface Staff {
@@ -48,6 +48,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
   const router = useRouter()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isPlaying] = useState(true)
+  const [showSliderModal, setShowSliderModal] = useState(false)
   const [formData, setFormData] = useState({
     customerName: '',
     customerPhone: '',
@@ -322,7 +323,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-3 sm:py-3">
+    <main className="mx-auto px-4 py-3 sm:py-3" style={{ maxWidth: '416px' }}>
       <div className="space-y-6">
         
         {/* Appointment Form */}
@@ -609,12 +610,16 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
         <div className="bg-white rounded-xl shadow-md p-3 sm:p-6">
           <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Çalışmalarımız</h2>
           
-          {/* Modern Slider */}
+          {/* Modern Slider Preview */}
           <div className="mb-3 sm:mb-4">
             {sliderImages.length > 0 ? (
-              <div className="relative w-full h-48 sm:h-60 lg:h-72 group">
+              <div 
+                onClick={() => setShowSliderModal(true)}
+                className="relative w-full group cursor-pointer"
+                style={{ aspectRatio: '9/16' }}
+              >
                 {/* Main Image Container */}
-                <div className="relative w-full h-full overflow-hidden rounded-xl shadow-lg">
+                <div className="relative w-full h-full overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                   {/* Background Gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10" />
                   
@@ -626,8 +631,20 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
                       priority={currentImageIndex === 0}
-                      className="object-cover transition-all duration-300"
+                      className="object-cover transition-all duration-300 group-hover:scale-105"
                     />
+                  </div>
+
+                  {/* Click to View Overlay */}
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-full w-12 h-12 flex items-center justify-center mb-2">
+                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </div>
+                      <p className="text-sm font-medium">Görüntülemek için tıklayın</p>
+                    </div>
                   </div>
 
                   {/* Content Overlay */}
@@ -643,52 +660,16 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                       )}
                     </div>
                   </div>
-                </div>
 
-                {/* Navigation Arrows - Her zaman görünür, daha küçük ve sade */}
-                {sliderImages.length > 1 && (
-                  <>
-                    <button
-                      onClick={prevImage}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-white/80 hover:bg-white text-gray-800 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105 backdrop-blur-sm border border-white/30"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    
-                    <button
-                      onClick={nextImage}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-white/80 hover:bg-white text-gray-800 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105 backdrop-blur-sm border border-white/30"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </>
-                )}
-
-                {/* Dots Indicator */}
-                {sliderImages.length > 1 && (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
-                    <div className="flex space-x-2">
-                      {sliderImages.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setCurrentImageIndex(index)}
-                          className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${
-                            index === currentImageIndex
-                              ? 'bg-white scale-125 shadow-lg'
-                              : 'bg-white/60 hover:bg-white/80'
-                          }`}
-                        />
-                      ))}
+                  {/* Image Count Indicator */}
+                  {sliderImages.length > 1 && (
+                    <div className="absolute top-4 right-4 z-30">
+                      <div className="bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
+                        {currentImageIndex + 1} / {sliderImages.length}
+                      </div>
                     </div>
-                  </div>
-                )}
-
-                {/* Progress Bar */}
-                {sliderImages.length > 1 && isPlaying && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-20">
-                    <div className="h-full bg-white animate-pulse" />
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ) : (
               <div className="relative w-full h-48 sm:h-60 lg:h-72 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
@@ -703,6 +684,120 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
           </div>
         </div>
       </div>
+
+      {/* Slider Modal - 9:16 Format */}
+      {showSliderModal && (
+        <>
+          {/* Background Blur Overlay */}
+          <div 
+            className="fixed inset-0 z-50"
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)'
+            }}
+            onClick={() => setShowSliderModal(false)}
+          />
+          
+          {/* Modal Container */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="relative w-full max-w-sm mx-auto">
+              {/* 9:16 Image Container */}
+              <div className="relative w-full" style={{ aspectRatio: '9/16' }}>
+                <div className="relative w-full h-full overflow-hidden rounded-2xl shadow-2xl">
+                  {/* Close Button - Inside Image */}
+                  <button
+                    onClick={() => setShowSliderModal(false)}
+                    className="absolute top-4 right-4 z-60 bg-white/90 hover:bg-white text-black w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+
+                  {/* Image */}
+                  <Image
+                    src={sliderImages[currentImageIndex].url}
+                    alt={sliderImages[currentImageIndex].name}
+                    fill
+                    sizes="(max-width: 768px) 90vw, 400px"
+                    className="object-cover"
+                    priority
+                  />
+
+                  {/* Content Overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                    <div className="text-white">
+                      <h3 className="text-lg font-bold mb-2">
+                        {sliderImages[currentImageIndex].name}
+                      </h3>
+                      {sliderImages[currentImageIndex].description && (
+                        <p className="text-sm text-white/90">
+                          {sliderImages[currentImageIndex].description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Navigation Arrows */}
+                  {sliderImages.length > 1 && (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          prevImage()
+                        }}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 z-60 bg-white/30 hover:bg-white/50 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-colors"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          nextImage()
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 z-60 bg-white/30 hover:bg-white/50 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-colors"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
+
+                  {/* Image Counter */}
+                  {sliderImages.length > 1 && (
+                    <div className="absolute top-4 left-4 z-60">
+                      <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                        {currentImageIndex + 1} / {sliderImages.length}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Dots Indicator */}
+                  {sliderImages.length > 1 && (
+                    <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-60">
+                      <div className="flex space-x-2">
+                        {sliderImages.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setCurrentImageIndex(index)
+                            }}
+                            className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                              index === currentImageIndex
+                                ? 'bg-white scale-125'
+                                : 'bg-white/50 hover:bg-white/80'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Success Modal - Compact */}
       {showSuccessModal && (

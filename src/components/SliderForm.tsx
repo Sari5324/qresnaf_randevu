@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Images, Upload, Save } from 'lucide-react'
+import { Images, Upload, Save, ArrowLeft } from 'lucide-react'
 import FileUpload from '@/components/FileUpload'
+import Link from 'next/link'
 
 interface SliderFormProps {
   initialData?: {
@@ -167,10 +168,19 @@ export default function SliderForm({ initialData }: SliderFormProps) {
     <form onSubmit={handleSubmit} className="p-6 space-y-6">
       {/* Basic Info */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-          <Images className="w-5 h-5 mr-2" />
-          Görsel Bilgileri
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-medium text-gray-900 flex items-center">
+            <Images className="w-5 h-5 mr-2" />
+            Görsel Bilgileri
+          </h3>
+          <Link
+            href="/admin/slider"
+            className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-gray-600 hover:text-gray-800 hover:border-gray-400 rounded-lg transition-colors text-sm"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Geri
+          </Link>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">

@@ -46,7 +46,7 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Randevular</h3>
-                    <p className="text-gray-600 text-sm mb-4">Randevu yönetimi ve takvibi</p>
+                    
                     <Link href="/admin/appointments" className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
@@ -59,7 +59,7 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Personel</h3>
-                    <p className="text-gray-600 text-sm mb-4">Çalışan personel yönetimi</p>
+                    
                     <Link href="/admin/staff" className="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
@@ -72,7 +72,7 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Slider Görselleri</h3>
-                    <p className="text-gray-600 text-sm mb-4">Ana sayfa slider yönetimi</p>
+                    
                     <Link href="/admin/slider" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
@@ -85,7 +85,7 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Site Ayarları</h3>
-                    <p className="text-gray-600 text-sm mb-4">Tema ve site düzenlemeleri</p>
+                    
                     <Link href="/admin/settings" className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>

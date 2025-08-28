@@ -189,7 +189,7 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
     <div className="min-h-screen bg-radial-[at_50%_0%] from-primary-300 via-primary-200 to-primary-100">
       {/* Minimal Header - Exactly like the image */}
       <header className="bg-primary-50/75 backdrop-blur-md shadow-sm border-b border-primary-100/20 bg-primary-50 sticky top-0 z-50 shadow-xl">
-        <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="mx-auto px-4 py-4 flex items-center justify-between" style={{ maxWidth: '416px' }}>
           <Link
             href="/"
             className="inline-block"
@@ -200,7 +200,7 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
       </header>
 
       {/* Content */}
-      <main className="max-w-md mx-auto px-4 py-6 space-y-6">
+      <main className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '416px' }}>
         {/* Success Message */}
         {success && (
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-2 shadow-sm">

@@ -8,13 +8,15 @@ interface AppointmentDeleteButtonProps {
   customerName: string
   date: string
   time: string
+  onDelete?: () => void
 }
 
 export default function AppointmentDeleteButton({ 
   appointmentId, 
   customerName, 
   date, 
-  time 
+  time,
+  onDelete
 }: AppointmentDeleteButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -30,7 +32,11 @@ export default function AppointmentDeleteButton({
       })
 
       if (response.ok) {
-        window.location.reload()
+        if (onDelete) {
+          onDelete()
+        } else {
+          window.location.reload()
+        }
       } else {
         const errorData = await response.json()
         alert(errorData.error || 'Randevu silinirken hata oluştu')

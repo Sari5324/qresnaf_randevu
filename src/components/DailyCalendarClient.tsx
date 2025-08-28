@@ -44,18 +44,12 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
   const [statusFilter, setStatusFilter] = useState('')
   const [staffFilter, setStaffFilter] = useState('')
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [appointmentData, setAppointmentData] = useState(appointments)
 
-  // Dynamic time slots based on appointments
+  // Only show time slots that have appointments
   const timeSlots = useMemo(() => {
-    // Base time slots from 9:00 to 18:00
-    const baseSlots = [
-      '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-      '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-      '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
-    ]
-
-    // Get latest appointment time for current date
-    const currentDateAppointments = appointments.filter(appointment => {
+    // Get appointments for current date
+    const currentDateAppointments = appointmentData.filter(appointment => {
       const appointmentDate = new Date(appointment.date)
       const currentDateString = currentDate.toISOString().split('T')[0]
       const appointmentDateString = appointmentDate.toISOString().split('T')[0]
@@ -63,62 +57,35 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
     })
 
     if (currentDateAppointments.length === 0) {
-      return baseSlots
+      return []
     }
 
-    // Find the latest appointment time
-    const latestTime = currentDateAppointments.reduce((latest, appointment) => {
-      return appointment.time > latest ? appointment.time : latest
-    }, '17:30')
+    // Get unique time slots from appointments and sort them
+    const appointmentTimes = [...new Set(currentDateAppointments.map(app => app.time))].sort()
+    return appointmentTimes
+  }, [appointmentData, currentDate])
 
-    // Generate extended time slots if needed
-    const extendedSlots = [...baseSlots]
-    const latestHour = parseInt(latestTime.split(':')[0])
-    const latestMinute = parseInt(latestTime.split(':')[1])
-
-    // Extend to at least 30 minutes after the latest appointment
-    let currentHour = 18
-    let currentMinute = 0
-
-    while (currentHour < latestHour || (currentHour === latestHour && currentMinute <= latestMinute + 30)) {
-      const timeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`
-      if (!extendedSlots.includes(timeString)) {
-        extendedSlots.push(timeString)
-      }
-      
-      currentMinute += 30
-      if (currentMinute >= 60) {
-        currentMinute = 0
-        currentHour++
-      }
-      
-      // Safety limit - don't go beyond 23:30
-      if (currentHour > 23) break
+  // Get status-based colors
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'PENDING':
+        return 'bg-yellow-500 border-yellow-600'
+      case 'CONFIRMED':
+        return 'bg-green-500 border-green-600'
+      case 'CANCELLED':
+        return 'bg-red-500 border-red-600'
+      case 'COMPLETED':
+        return 'bg-blue-500 border-blue-600'
+      default:
+        return 'bg-gray-500 border-gray-600'
     }
-
-    return extendedSlots.sort()
-  }, [appointments, currentDate])
-
-  // Staff colors
-  const staffColors = [
-    'bg-blue-500',
-    'bg-purple-500', 
-    'bg-green-500',
-    'bg-orange-500',
-    'bg-pink-500',
-    'bg-indigo-500',
-    'bg-red-500',
-    'bg-teal-500'
-  ]
-
-  const getStaffColor = (staffName: string) => {
-    const index = staffList.findIndex(staff => staff.name === staffName)
-    return staffColors[index % staffColors.length] || 'bg-gray-500'
   }
+
+
 
   // Filter appointments
   const filteredAppointments = useMemo(() => {
-    return appointments.filter(appointment => {
+    return appointmentData.filter(appointment => {
       const statusMatch = !statusFilter || appointment.status === statusFilter
       const staffMatch = !staffFilter || appointment.staff.name === staffFilter
       
@@ -130,7 +97,7 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
       
       return statusMatch && staffMatch && dateMatch
     })
-  }, [appointments, statusFilter, staffFilter, currentDate])
+  }, [appointmentData, statusFilter, staffFilter, currentDate])
 
   // Get appointments for a specific time slot
   const getAppointmentsForTime = (time: string) => {
@@ -188,36 +155,48 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                 <h1 className="text-lg sm:text-2xl font-bold text-gray-900">Günlük Randevu Takvimi</h1>
               </div>
               
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+                {/* Add Appointment Button */}
                 <button
-                  onClick={() => navigateDay('prev')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  onClick={() => window.location.href = '/admin/appointments/new'}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm hover:shadow-md"
                 >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Plus className="w-4 h-4" />
+                  Yeni Randevu
                 </button>
                 
-                <div className="text-center min-w-[200px] sm:min-w-[300px]">
-                  <div className="text-sm sm:text-lg font-semibold text-gray-900">
-                    {formatDate(currentDate)}
+                {/* Date Navigation */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => navigateDay('prev')}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                  
+                  <div className="text-center min-w-[200px] sm:min-w-[300px]">
+                    <div className="text-sm sm:text-lg font-semibold text-gray-900">
+                      {formatDate(currentDate)}
+                    </div>
+                    {isToday() && (
+                      <div className="text-xs text-green-600 font-medium">Bugün</div>
+                    )}
                   </div>
-                  {isToday() && (
-                    <div className="text-xs text-green-600 font-medium">Bugün</div>
-                  )}
+                  
+                  <button
+                    onClick={() => navigateDay('next')}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                  
+                  <button
+                    onClick={() => setCurrentDate(new Date())}
+                    className="ml-2 px-3 py-2 bg-green-600 text-white text-xs sm:text-sm rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Bugün
+                  </button>
                 </div>
-                
-                <button
-                  onClick={() => navigateDay('next')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-                
-                <button
-                  onClick={() => setCurrentDate(new Date())}
-                  className="ml-2 px-3 py-2 bg-green-600 text-white text-xs sm:text-sm rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  Bugün
-                </button>
               </div>
             </div>
           </div>
@@ -261,16 +240,26 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
             </div>
           </div>
 
-          {/* Staff Legend */}
+          {/* Status Legend */}
           <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6">
-            <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-3">Personel Renkleri</h3>
+            <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-3">Randevu Durumları</h3>
             <div className="flex flex-wrap gap-2 sm:gap-4">
-              {staffList.map((staff, index) => (
-                <div key={staff.id} className="flex items-center gap-2">
-                  <div className={`w-3 h-3 sm:w-4 sm:h-4 rounded ${staffColors[index % staffColors.length]}`}></div>
-                  <span className="text-xs sm:text-sm text-gray-700">{staff.name}</span>
-                </div>
-              ))}
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-yellow-500"></div>
+                <span className="text-xs sm:text-sm text-gray-700">Bekliyor</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-green-500"></div>
+                <span className="text-xs sm:text-sm text-gray-700">Onaylandı</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-red-500"></div>
+                <span className="text-xs sm:text-sm text-gray-700">İptal Edildi</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-blue-500"></div>
+                <span className="text-xs sm:text-sm text-gray-700">Tamamlandı</span>
+              </div>
             </div>
           </div>
 
@@ -289,75 +278,125 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
 
             {/* Timeline */}
             <div className="p-2 sm:p-4">
-              <div className="space-y-1">
-                {timeSlots.map((time) => {
-                  const timeAppointments = getAppointmentsForTime(time)
-                  
-                  return (
-                    <div key={time} className="flex border-b border-gray-100 last:border-b-0">
-                      {/* Time Column */}
-                      <div className={`w-16 sm:w-20 px-2 bg-gray-50 text-xs sm:text-sm font-medium text-gray-600 text-center ${timeAppointments.length > 0 ? 'py-2 sm:py-3' : 'py-1 sm:py-1'}`}>
-                        {time}
-                      </div>
-                      
-                      {/* Appointments Column */}
-                      <div className={`flex-1 px-2 sm:px-4 ${timeAppointments.length > 0 ? 'py-2 sm:py-3 min-h-[40px] sm:min-h-[50px]' : 'py-1 sm:py-1 min-h-[20px] sm:min-h-[25px]'}`}>
-                        {timeAppointments.length > 0 ? (
-                          <div className="flex flex-wrap gap-1 sm:gap-2">
+              {timeSlots.length > 0 ? (
+                <div className="space-y-1">
+                  {timeSlots.map((time) => {
+                    const timeAppointments = getAppointmentsForTime(time)
+                    
+                    return (
+                      <div key={time} className="flex border-b border-gray-100 last:border-b-0">
+                        {/* Time Column */}
+                        <div className="w-16 sm:w-20 py-2 sm:py-3 px-2 bg-gray-50 text-xs sm:text-sm font-medium text-gray-600 text-center">
+                          {time}
+                        </div>
+                        
+                        {/* Appointments Column */}
+                        <div className="flex-1 py-2 sm:py-3 px-2 sm:px-4 min-h-[40px] sm:min-h-[50px]">
+                          <div className="flex flex-wrap gap-2 sm:gap-3">
                             {timeAppointments.map((appointment) => (
                               <div
                                 key={appointment.id}
-                                className={`${getStaffColor(appointment.staff.name)} text-white rounded-lg p-2 sm:p-3 text-xs sm:text-sm min-w-[120px] sm:min-w-[200px] shadow-sm hover:shadow-md transition-shadow`}
+                                className={`${getStatusColor(appointment.status)} text-white rounded-xl p-3 sm:p-4 text-xs sm:text-sm min-w-[160px] sm:min-w-[220px] shadow-lg hover:shadow-xl transition-all duration-200 border-2 hover:scale-[1.02] transform`}
                               >
-                                <div className="flex items-center justify-between mb-1 sm:mb-2">
-                                  <div className="flex items-center gap-1">
+                                {/* Header with Code and Status */}
+                                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                                  <div className="flex items-center gap-2">
+                                    <div className="bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1">
+                                      <span className="font-bold text-xs">{appointment.code}</span>
+                                    </div>
                                     {getStatusIcon(appointment.status)}
-                                    <span className="font-medium">{appointment.customerName}</span>
                                   </div>
                                   <div className="flex items-center gap-1">
+                                    {appointment.status === 'PENDING' && (
+                                      <button
+                                        onClick={async () => {
+                                          try {
+                                            const response = await fetch(`/api/appointments/${appointment.id}`, {
+                                              method: 'PATCH',
+                                              headers: { 'Content-Type': 'application/json' },
+                                              body: JSON.stringify({ status: 'CONFIRMED' })
+                                            })
+                                            if (response.ok) {
+                                              // Update state instead of reloading
+                                              setAppointmentData(prev => 
+                                                prev.map(apt => 
+                                                  apt.id === appointment.id 
+                                                    ? { ...apt, status: 'CONFIRMED' as const }
+                                                    : apt
+                                                )
+                                              )
+                                            }
+                                          } catch (error) {
+                                            console.error('Error confirming appointment:', error)
+                                          }
+                                        }}
+                                        className="p-1.5 hover:bg-white/20 rounded-lg text-white transition-colors"
+                                        title="Randevuyu Onayla"
+                                      >
+                                        <CheckCircle className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
                                     <button
                                       onClick={() => window.location.href = `/admin/appointments/${appointment.id}/edit`}
-                                      className="p-1 hover:bg-white/20 rounded text-white transition-colors"
+                                      className="p-1.5 hover:bg-white/20 rounded-lg text-white transition-colors"
                                       title="Randevuyu Düzenle"
                                     >
-                                      <Edit className="w-3 h-3" />
+                                      <Edit className="w-3.5 h-3.5" />
                                     </button>
                                     <AppointmentDeleteButton 
                                       appointmentId={appointment.id}
                                       customerName={appointment.customerName}
                                       date={appointment.date}
                                       time={appointment.time}
+                                      onDelete={() => {
+                                        setAppointmentData(prev => 
+                                          prev.filter(apt => apt.id !== appointment.id)
+                                        )
+                                      }}
                                     />
                                   </div>
                                 </div>
-                                <div className="space-y-1 text-xs opacity-90">
-                                  <div className="flex items-center gap-1">
-                                    <Phone className="w-3 h-3" />
-                                    <span>{appointment.customerPhone}</span>
+
+                                {/* Customer Name - Prominent */}
+                                <div className="mb-2 sm:mb-3">
+                                  <h4 className="font-bold text-sm sm:text-base text-white">
+                                    {appointment.customerName}
+                                  </h4>
+                                </div>
+
+                                {/* Contact Info */}
+                                <div className="space-y-1.5 text-xs opacity-95">
+                                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-2 py-1">
+                                    <Phone className="w-3 h-3 flex-shrink-0" />
+                                    <span className="font-medium">{appointment.customerPhone}</span>
                                   </div>
-                                  <div className="flex items-center gap-1">
-                                    <User className="w-3 h-3" />
-                                    <span>{appointment.staff.name}</span>
+                                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-2 py-1">
+                                    <User className="w-3 h-3 flex-shrink-0" />
+                                    <span className="font-medium">{appointment.staff.name}</span>
                                   </div>
                                 </div>
+
+                                {/* Notes - if any */}
                                 {appointment.notes && (
-                                  <div className="mt-1 text-xs opacity-80 truncate">
-                                    {appointment.notes}
+                                  <div className="mt-2 text-xs bg-white/10 rounded-lg px-2 py-1.5 opacity-90">
+                                    <span className="italic">"{appointment.notes}"</span>
                                   </div>
                                 )}
                               </div>
                             ))}
                           </div>
-                        ) : (
-                          <div className="flex items-center h-full">
-                            {/* Empty time slot - no text, just space */}
-                          </div>
-                        )}
-                      </div>
+                        </div>
                     </div>
                   )
                 })}
-              </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg font-medium">Bu gün için randevu bulunmuyor</p>
+                  <p className="text-sm">Başka bir gün seçin veya yeni randevu oluşturun</p>
+                </div>
+              )}
             </div>
           </div>
 
