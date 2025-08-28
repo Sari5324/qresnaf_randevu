@@ -184,7 +184,7 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
           <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-6 mb-4 sm:mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-2 sm:gap-4">
-                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h1 className="text-lg sm:text-2xl font-bold text-gray-900">Günlük Randevu Takvimi</h1>
               </div>
               
@@ -201,7 +201,7 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                     {formatDate(currentDate)}
                   </div>
                   {isToday() && (
-                    <div className="text-xs text-blue-600 font-medium">Bugün</div>
+                    <div className="text-xs text-green-600 font-medium">Bugün</div>
                   )}
                 </div>
                 
@@ -214,7 +214,7 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                 
                 <button
                   onClick={() => setCurrentDate(new Date())}
-                  className="ml-2 px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                  className="ml-2 px-3 py-2 bg-green-600 text-white text-xs sm:text-sm rounded-lg hover:bg-green-700 transition-colors"
                 >
                   Bugün
                 </button>
@@ -234,7 +234,7 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="">Tüm Durumlar</option>
                   <option value="PENDING">Bekliyor</option>
@@ -248,7 +248,7 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                 <select
                   value={staffFilter}
                   onChange={(e) => setStaffFilter(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="">Tüm Personel</option>
                   {staffList.map((staff) => (
@@ -281,7 +281,7 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                   Günlük Program
                 </h2>
-                <div className="text-xs sm:text-sm text-blue-600 font-medium">
+                <div className="text-xs sm:text-sm text-green-600 font-medium">
                   {filteredAppointments.length} randevu
                 </div>
               </div>
@@ -296,12 +296,12 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                   return (
                     <div key={time} className="flex border-b border-gray-100 last:border-b-0">
                       {/* Time Column */}
-                      <div className="w-16 sm:w-20 py-2 sm:py-3 px-2 bg-gray-50 text-xs sm:text-sm font-medium text-gray-600 text-center">
+                      <div className={`w-16 sm:w-20 px-2 bg-gray-50 text-xs sm:text-sm font-medium text-gray-600 text-center ${timeAppointments.length > 0 ? 'py-2 sm:py-3' : 'py-1 sm:py-1'}`}>
                         {time}
                       </div>
                       
                       {/* Appointments Column */}
-                      <div className="flex-1 py-2 sm:py-3 px-2 sm:px-4 min-h-[40px] sm:min-h-[50px]">
+                      <div className={`flex-1 px-2 sm:px-4 ${timeAppointments.length > 0 ? 'py-2 sm:py-3 min-h-[40px] sm:min-h-[50px]' : 'py-1 sm:py-1 min-h-[20px] sm:min-h-[25px]'}`}>
                         {timeAppointments.length > 0 ? (
                           <div className="flex flex-wrap gap-1 sm:gap-2">
                             {timeAppointments.map((appointment) => (
@@ -349,8 +349,8 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                             ))}
                           </div>
                         ) : (
-                          <div className="text-gray-400 text-xs sm:text-sm italic flex items-center h-full">
-                            Boş
+                          <div className="flex items-center h-full">
+                            {/* Empty time slot - no text, just space */}
                           </div>
                         )}
                       </div>

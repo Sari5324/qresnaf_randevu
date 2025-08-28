@@ -186,51 +186,16 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Header Section - QR Design (Same as homepage) */}
-      <header className="shadow-xl bg-primary-50/75 backdrop-blur-xl border-b border-primary-100/20 z-50 relative">
-        <div className="text-center max-w-md mx-auto px-4 py-4 h-full flex flex-col justify-center">
-          
-          {/* Back Button - Daha görünür ve erişilebilir */}
-          <div className="absolute top-3 left-3 z-10">
-            <Link
-              href="/"
-              className="flex items-center gap-2 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl p-3 rounded-xl transition-all duration-200 border border-primary-100/50 backdrop-blur-sm transform hover:-translate-y-0.5"
-            >
-              <ArrowLeft className="w-5 h-5 text-primary-600" />
-              <span className="text-sm font-medium text-primary-700">Geri</span>
-            </Link>
-          </div>
-
-          {/* Company Logo */}
-          <div className="mb-4">
-            {siteSettings?.companyLogo ? (
-              <img
-                src={siteSettings.companyLogo}
-                alt="Şirket Logosu"
-                className="object-contain rounded mx-auto"
-                style={{ width: '100px', height: '100px' }}
-              />
-            ) : (
-              <img
-                src="https://ornek-menu.qresnaf.com/_next/image?url=%2Fuploads%2F1755565506666-a2sa7xv05tc.png&w=256&q=75"
-                alt="QR Logo"
-                className="object-contain mx-auto"
-                style={{ width: '100px', height: '100px' }}
-              />
-            )}
-          </div>
-
-          {/* Company Name */}
-          <h1 className="text-2xl font-bold text-primary-800">
-            {siteSettings?.companyName || 'EsnaF'}
-          </h1>
-
-          {/* Page Title */}
-          <p className="text-primary-950 text-sm mb-4 leading-relaxed px-4">
-            Randevu Sorgulama
-          </p>
-
+    <div className="min-h-screen bg-radial-[at_50%_0%] from-primary-300 via-primary-200 to-primary-100">
+      {/* Minimal Header - Exactly like the image */}
+      <header className="bg-primary-50/75 backdrop-blur-md shadow-sm border-b border-primary-100/20 bg-primary-50 sticky top-0 z-50 shadow-xl">
+        <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-block"
+          >
+            <ArrowLeft className="w-6 h-6 text-primary-600 hover:text-primary-700" />
+          </Link>
         </div>
       </header>
 
