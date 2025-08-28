@@ -17,6 +17,7 @@ import {
   Edit
 } from 'lucide-react'
 import AppointmentDeleteButton from './AppointmentDeleteButton'
+import AppointmentCompleteButton from './AppointmentCompleteButton'
 
 interface Staff {
   name: string
@@ -335,6 +336,23 @@ export default function DailyCalendarClient({ appointments, staffList }: DailyCa
                                       >
                                         <CheckCircle className="w-3.5 h-3.5" />
                                       </button>
+                                    )}
+                                    {appointment.status === 'CONFIRMED' && (
+                                      <AppointmentCompleteButton 
+                                        appointmentId={appointment.id}
+                                        customerName={appointment.customerName}
+                                        date={appointment.date}
+                                        time={appointment.time}
+                                        onComplete={() => {
+                                          setAppointmentData(prev => 
+                                            prev.map(apt => 
+                                              apt.id === appointment.id 
+                                                ? { ...apt, status: 'COMPLETED' as const }
+                                                : apt
+                                            )
+                                          )
+                                        }}
+                                      />
                                     )}
                                     <button
                                       onClick={() => window.location.href = `/admin/appointments/${appointment.id}/edit`}

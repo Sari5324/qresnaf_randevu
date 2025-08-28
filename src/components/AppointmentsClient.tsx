@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import AppointmentDeleteButton from '@/components/AppointmentDeleteButton'
+import AppointmentCompleteButton from '@/components/AppointmentCompleteButton'
 import { 
   Calendar, 
   Clock, 
@@ -277,6 +278,14 @@ export default function AppointmentsClient({ appointments, staffList }: Appointm
                           <Edit className="w-4 h-4 mr-1" />
                           Düzenle
                         </Link>
+                        {appointment.status === 'CONFIRMED' && (
+                          <AppointmentCompleteButton 
+                            appointmentId={appointment.id}
+                            customerName={appointment.customerName}
+                            date={appointment.date}
+                            time={appointment.time}
+                          />
+                        )}
                         <AppointmentDeleteButton 
                           appointmentId={appointment.id}
                           customerName={appointment.customerName}

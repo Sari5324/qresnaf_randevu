@@ -53,7 +53,7 @@ export default function AppointmentDeleteButton({
     <button 
       onClick={handleDelete}
       disabled={isDeleting}
-      className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded disabled:opacity-50"
+      className="text-white p-1 rounded disabled:opacity-50 bg-opacity-500 hover:bg-white/20"
     >
       <Trash2 className="w-4 h-4" />
     </button>
