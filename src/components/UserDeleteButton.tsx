@@ -18,31 +18,21 @@ export default function UserDeleteButton({
 }: UserDeleteButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false)
 
-  console.log('UserDeleteButton render:', { userId, username, currentUserEmail, userEmail })
-
   const handleDelete = async () => {
-    alert('Delete button clicked!') // Test alert
-    console.log('Delete button clicked for user:', userId, username)
-    
     if (!confirm(`${username} kullanıcısını silmek istediğinizden emin misiniz?`)) {
       return
     }
 
     setIsDeleting(true)
     try {
-      console.log('Sending DELETE request to:', `/api/admin/users/${userId}`)
       const response = await fetch(`/api/admin/users/${userId}`, {
         method: 'DELETE',
       })
       
-      console.log('Delete response status:', response.status)
-      
       if (response.ok) {
-        console.log('Delete successful, reloading page')
         window.location.reload()
       } else {
         const errorData = await response.json()
-        console.log('Delete error:', errorData)
         alert(errorData.error || 'Kullanıcı silinirken hata oluştu')
       }
     } catch (error) {

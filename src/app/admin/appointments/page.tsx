@@ -58,10 +58,22 @@ export default async function AdminAppointments() {
     }
   }))
 
+  // Calculate statistics
+  const stats = {
+    total: appointments.length,
+    pending: appointments.filter(a => a.status === 'PENDING').length,
+    confirmed: appointments.filter(a => a.status === 'CONFIRMED').length,
+    cancelled: appointments.filter(a => a.status === 'CANCELLED').length,
+    completed: appointments.filter(a => a.status === 'COMPLETED').length,
+    todayTotal: 0,
+    thisWeekTotal: 0,
+    thisMonthTotal: 0
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminNav />
-      <DailyCalendarClient appointments={transformedAppointments} staffList={staffList} />
+      <DailyCalendarClient appointments={transformedAppointments} staffList={staffList} stats={stats} />
       <AdminFoot />
     </div>
   )

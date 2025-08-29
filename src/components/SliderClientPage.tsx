@@ -47,7 +47,7 @@ export default function SliderClientPage({
       } else {
         alert('Durum değiştirilemedi')
       }
-    } catch (error) {
+    } catch {
       alert('Bir hata oluştu')
     } finally {
       setLoading(false)
@@ -71,7 +71,7 @@ export default function SliderClientPage({
         const data = await response.json()
         alert('Hata: ' + (data.error || 'Görsel silinemedi'))
       }
-    } catch (error) {
+    } catch {
       alert('Bir hata oluştu')
     } finally {
       setLoading(false)
@@ -92,7 +92,7 @@ export default function SliderClientPage({
       } else {
         alert('Sıralama değiştirilemedi')
       }
-    } catch (error) {
+    } catch {
       alert('Bir hata oluştu')
     } finally {
       setLoading(false)

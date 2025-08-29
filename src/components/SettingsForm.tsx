@@ -165,8 +165,6 @@ export default function SettingsForm({ settings }: SettingsFormProps) {
         alert('Ayarlar başarıyla güncellendi!')
         
         // Only reload if theme changed to apply CSS changes
-        // Temporarily disabled for testing
-        /*
         if (updatedSettings.themeColor !== settings?.themeColor || 
             updatedSettings.themeFont !== settings?.themeFont ||
             updatedSettings.darkMode !== settings?.darkMode) {
@@ -174,7 +172,6 @@ export default function SettingsForm({ settings }: SettingsFormProps) {
             window.location.reload()
           }, 1000)
         }
-        */
       } else {
         const errorData = await response.json()
         setErrors(errorData.errors || { general: 'Bir hata oluştu' })

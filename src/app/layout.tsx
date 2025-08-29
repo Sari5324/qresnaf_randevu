@@ -167,10 +167,7 @@ export default async function RootLayout({
   // Dark mode kontrol - admin panelden ayarlanabilir
   const isDarkMode = Boolean((siteSettings as { darkMode?: boolean })?.darkMode)
   
-  // Debug log - geçici
-  console.log('siteSettings?.darkMode:', (siteSettings as { darkMode?: boolean })?.darkMode)
-  console.log('isDarkMode:', isDarkMode)
-  
+
   const themeStyles = generateColorScale(siteSettings?.themeColor || '#3B82F6', isDarkMode)
   
   // Font class mapping - admin sayfaları için özel kontrol

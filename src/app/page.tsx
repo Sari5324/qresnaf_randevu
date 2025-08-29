@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Search } from 'lucide-react'
 import ViewTracker from '@/components/ViewTracker'
 import ClientAppointmentPage from '@/components/ClientAppointmentPage'
@@ -33,11 +34,12 @@ export default async function HomePage() {
           {/* Company Logo */}
           {siteSettings?.companyLogo && (
             <div className="mb-4">
-              <img
+              <Image
                 src={siteSettings.companyLogo}
                 alt="Şirket Logosu"
+                width={100}
+                height={100}
                 className="object-contain rounded mx-auto"
-                style={{ width: '100px', height: '100px' }}
               />
             </div>
           )}
