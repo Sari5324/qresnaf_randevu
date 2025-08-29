@@ -31,23 +31,16 @@ export default async function HomePage() {
         <div className="text-center max-w-md mx-auto px-4 py-4 h-full flex flex-col justify-center">
           
           {/* Company Logo */}
-          <div className="mb-4">
-            {siteSettings?.companyLogo ? (
+          {siteSettings?.companyLogo && (
+            <div className="mb-4">
               <img
                 src={siteSettings.companyLogo}
                 alt="Şirket Logosu"
                 className="object-contain rounded mx-auto"
                 style={{ width: '100px', height: '100px' }}
               />
-            ) : (
-              <img
-                src="https://ornek-menu.qresnaf.com/_next/image?url=%2Fuploads%2F1755565506666-a2sa7xv05tc.png&w=256&q=75"
-                alt="QR Logo"
-                className="object-contain mx-auto"
-                style={{ width: '100px', height: '100px' }}
-              />
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Company Name */}
           <h1 className="text-2xl font-bold text-primary-800">
