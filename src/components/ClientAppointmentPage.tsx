@@ -36,6 +36,7 @@ interface SiteSettings {
   id: string
   companyName: string
   description?: string | null
+  darkMode?: boolean
 }
 
 interface ClientAppointmentPageProps {
@@ -44,10 +45,13 @@ interface ClientAppointmentPageProps {
   siteSettings: SiteSettings | null
 }
 
-export default function ClientAppointmentPage({ staff, sliderImages }: ClientAppointmentPageProps) {
+export default function ClientAppointmentPage({ staff, sliderImages, siteSettings }: ClientAppointmentPageProps) {
   const router = useRouter()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isPlaying] = useState(true)
+  
+  // Dark mode kontrolü
+  const isDarkMode = Boolean(siteSettings?.darkMode)
   const [showSliderModal, setShowSliderModal] = useState(false)
   const [formData, setFormData] = useState({
     customerName: '',
@@ -327,38 +331,38 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
       <div className="space-y-6">
         
         {/* Appointment Form */}
-        <div className="bg-white rounded-xl shadow-md p-3 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Randevu Al</h2>
-          
+        <div className={`${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'} rounded-xl shadow-md p-3 sm:p-6`}>
+          <h2 className={`text-lg sm:text-xl font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-3 sm:mb-4`}>Randevu Al</h2>
+
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             {/* Name Field */}
             <div>
-              <label className="block text-gray-600 font-medium mb-2 text-sm sm:text-base">İsim Soyisim</label>
+              <label className={`block ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} font-medium mb-2 text-sm sm:text-base`}>İsim Soyisim</label>
               <input
                 type="text"
                 value={formData.customerName}
                 onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm sm:text-base"
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-gray-200 placeholder:text-gray-500' : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400'} rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm sm:text-base`}
                 placeholder="Adınız ve soyadınız"
               />
             </div>
 
             {/* Phone Field */}
             <div>
-              <label className="block text-gray-600 font-medium mb-2 text-sm sm:text-base">Telefon Numarası</label>
+              <label className={`block ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} font-medium mb-2 text-sm sm:text-base`}>Telefon Numarası</label>
               <input
                 type="tel"
                 value={formData.customerPhone}
                 onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm sm:text-base"
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-gray-200 placeholder:text-gray-500' : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400'} rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm sm:text-base`}
                 placeholder="0532 123 45 67"
               />
             </div>
 
             {/* Staff Selection */}
             <div>
-              <label className="block text-gray-600 font-medium mb-3 text-sm sm:text-base">Personel Seçimi</label>
-              <div className="max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <label className={`block ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} font-medium mb-3 text-sm sm:text-base`}>Personel Seçimi</label>
+              <div className="max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
                 <div className="grid grid-cols-1 gap-2">
                   {staff.map((member) => (
                     <div
@@ -366,21 +370,21 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                       onClick={() => setFormData({ ...formData, staffId: member.id })}
                       className={`relative p-3 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-sm ${
                         formData.staffId === member.id
-                          ? 'border-primary-500 bg-primary-50 shadow-sm'
-                          : 'border-gray-200 bg-white hover:border-primary-300'
+                          ? `border-primary-500 ${isDarkMode ? 'bg-primary-900/20' : 'bg-primary-50'} shadow-sm`
+                          : `${isDarkMode ? 'border-gray-600 bg-gray-700 hover:border-primary-400' : 'border-gray-200 bg-white hover:border-primary-300'}`
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${
-                            formData.staffId === member.id ? 'bg-primary-500' : 'bg-gray-400'
+                            formData.staffId === member.id ? 'bg-primary-500' : `${isDarkMode ? 'bg-gray-600' : 'bg-gray-400'}`
                           }`}>
                             {member.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <h3 className="font-medium text-gray-900 text-sm">{member.name}</h3>
+                            <h3 className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} text-sm`}>{member.name}</h3>
                             {member.title && (
-                              <p className="text-xs text-gray-500">{member.title}</p>
+                              <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{member.title}</p>
                             )}
                           </div>
                         </div>
@@ -401,8 +405,8 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
               
               {/* Staff Schedule Info */}
               {formData.staffId && staffSchedule.length > 0 && (
-                <div className="mt-3 p-3 bg-primary-50 border border-primary-200 rounded-lg">
-                  <h4 className="text-sm font-medium text-primary-700 mb-2">Çalışma Saatleri</h4>
+                <div className={`mt-3 p-3 border rounded-lg ${isDarkMode ? 'bg-primary-900/20 border-primary-700' : 'bg-primary-50 border-primary-200'}`}>
+                  <h4 className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-primary-600' : 'text-primary-600'}`}>Çalışma Saatleri</h4>
                   <div className="grid grid-cols-1 gap-1 text-xs">
                     {staffSchedule
                       .filter(schedule => schedule.isWorking) // Sadece çalışma günlerini göster
@@ -424,12 +428,12 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                         
                         return (
                           <div key={schedule.dayOfWeek} className="flex justify-between items-center">
-                            <span className="text-primary-700">{dayNames[schedule.dayOfWeek as keyof typeof dayNames]}</span>
+                            <span className="text-primary-900 dark:text-primary-600">{dayNames[schedule.dayOfWeek as keyof typeof dayNames]}</span>
                             <div className="text-right">
-                              <div className="font-medium text-primary-700">
+                              <div className="font-medium text-primary-900 dark:text-primary-600">
                                 {schedule.startTime} - {schedule.endTime}
                               </div>
-                              <div className="text-xs text-primary-500">
+                              <div className="text-xs text-primary-900 dark:text-primary-600">
                                 Randevu: {schedule.interval === 60 ? '1 saat' : '30 dk'}
                               </div>
                             </div>
@@ -444,25 +448,25 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
             {/* Date Selection */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="text-gray-600 font-medium text-sm sm:text-base">Randevu Günü</label>
+                <label className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} font-medium text-sm sm:text-base`}>Randevu Günü</label>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setDateOffset(prev => Math.max(0, prev - 6))}
                     disabled={dateOffset === 0}
-                    className="p-2 rounded-lg hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-gray-200"
+                    className={`p-2 rounded-lg ${isDarkMode ? 'hover:bg-primary-900/20 border-gray-600' : 'hover:bg-primary-50 border-gray-200'} disabled:opacity-50 disabled:cursor-not-allowed transition-colors border`}
                   >
-                    <ChevronLeft className="w-4 h-4 text-gray-600" />
+                    <ChevronLeft className={`w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
                   </button>
-                  <span className="text-xs text-gray-500 px-3 py-1 bg-gray-100 rounded-full whitespace-nowrap">
+                  <span className={`text-xs ${isDarkMode ? 'text-gray-400 bg-gray-700' : 'text-gray-500 bg-gray-100'} px-3 py-1 rounded-full whitespace-nowrap`}>
                     {getDateRangeText()}
                   </span>
                   <button
                     type="button"
                     onClick={() => setDateOffset(prev => prev + 6)}
-                    className="p-2 rounded-lg hover:bg-primary-50 transition-colors border border-gray-200"
+                    className={`p-2 rounded-lg ${isDarkMode ? 'hover:bg-primary-900/20 border-gray-600' : 'hover:bg-primary-50 border-gray-200'} transition-colors border`}
                   >
-                    <ChevronRight className="w-4 h-4 text-gray-600" />
+                    <ChevronRight className={`w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
                   </button>
                 </div>
               </div>
@@ -487,18 +491,18 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                       disabled={!isAvailable}
                       className={`p-2 border-2 rounded-xl transition-all duration-200 text-center hover:shadow-sm ${
                         !isAvailable
-                          ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60'
+                          ? `${isDarkMode ? 'bg-gray-800 text-gray-600 border-gray-700' : 'bg-gray-100 text-gray-400 border-gray-200'} cursor-not-allowed opacity-60`
                           : selectedDate === dateStr
                           ? 'bg-primary-600 text-white border-primary-600 shadow-md'
-                          : 'border-gray-200 hover:bg-primary-50 hover:border-primary-300'
-                      } ${isToday && isAvailable ? 'ring-2 ring-orange-200' : ''}`}
+                          : `${isDarkMode ? 'border-gray-600 bg-gray-700 hover:bg-primary-900/20 hover:border-primary-400' : 'border-gray-200 bg-white hover:bg-primary-50 hover:border-primary-300'}`
+                      } ${isToday && isAvailable ? `ring-2 ${isDarkMode ? 'ring-orange-400' : 'ring-orange-200'}` : ''}`}
                     >
                       <div className={`text-xs mb-1 ${
                         !isAvailable 
-                          ? 'text-gray-400' 
+                          ? 'text-gray-400 dark:text-gray-600' 
                           : selectedDate === dateStr 
                           ? 'text-primary-100' 
-                          : 'text-gray-500'
+                          : 'text-gray-500 dark:text-gray-400'
                       }`}>
                         {date.toLocaleDateString('tr-TR', { weekday: 'short' })}
                       </div>
@@ -507,18 +511,15 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                       </div>
                       <div className={`text-xs ${
                         !isAvailable 
-                          ? 'text-gray-400' 
+                          ? 'text-gray-400 dark:text-gray-600' 
                           : selectedDate === dateStr 
                           ? 'text-primary-100' 
-                          : 'text-gray-500'
+                          : 'text-gray-500 dark:text-gray-400'
                       }`}>
                         {date.toLocaleDateString('tr-TR', { month: 'short' })}
                       </div>
                       {!isAvailable && (
-                        <div className="text-xs text-gray-400 font-bold mt-1">✕</div>
-                      )}
-                      {isToday && isAvailable && (
-                        <div className="text-xs text-orange-600 font-medium mt-1">Bugün</div>
+                        <div className="text-xs text-gray-400 dark:text-gray-600 font-bold mt-1">✕</div>
                       )}
                     </button>
                   )
@@ -528,10 +529,10 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
 
             {/* Time Selection */}
             <div>
-              <label className="block text-gray-600 font-medium mb-3 text-sm sm:text-base">Randevu Saati</label>
+              <label className={`block font-medium mb-3 text-sm sm:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Randevu Saati</label>
               {!selectedDate ? (
-                <div className="text-center py-8 text-gray-500">
-                  <svg className="w-8 h-8 mx-auto mb-2 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <svg className={`w-8 h-8 mx-auto mb-2 ${isDarkMode ? 'text-gray-600' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                   </svg>
                   <p className="text-sm">Önce tarih seçiniz</p>
@@ -544,8 +545,8 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                     
                     if (availableSlots.length === 0) {
                       return (
-                        <div className="col-span-full text-center py-8 text-gray-500">
-                          <svg className="w-8 h-8 mx-auto mb-2 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
+                          <svg className="w-8 h-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm8.707-10.293a1 1 0 00-1.414-1.414L9 14.586l-4.293-4.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0l9-9z" clipRule="evenodd" />
                           </svg>
                           <p className="text-sm">Bu tarihte çalışma saati bulunmamaktadır</p>
@@ -565,10 +566,10 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                           disabled={!isAvailable}
                           className={`p-3 border-2 rounded-xl transition-all duration-200 text-center hover:shadow-sm ${
                             !isAvailable
-                              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60'
+                              ? `${isDarkMode ? 'bg-gray-800 text-gray-600 border-gray-700' : 'bg-gray-100 text-gray-400 border-gray-200'} cursor-not-allowed opacity-60`
                               : selectedTime === time
                               ? 'bg-primary-600 text-white border-primary-600 shadow-md'
-                              : 'border-gray-200 hover:bg-primary-50 hover:border-primary-300'
+                              : `${isDarkMode ? 'border-gray-600 bg-gray-700 hover:bg-primary-900/20 hover:border-primary-400' : 'border-gray-200 bg-white hover:bg-primary-50 hover:border-primary-300'}`
                           }`}
                         >
                           <div className="flex items-center justify-center gap-1">
@@ -588,9 +589,21 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
               )}
             </div>
 
+            {/* Notes Field - Optional */}
+            <div>
+              <label className={`block font-medium mb-2 text-sm sm:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Not (Opsiyonel)</label>
+              <textarea
+                value={formData.notes}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm sm:text-base resize-none ${isDarkMode ? 'border-gray-600 bg-gray-700 text-gray-200 placeholder:text-gray-500' : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400'}`}
+                placeholder="Varsa eklemek istediğiniz notlar..."
+                rows={3}
+              />
+            </div>
+
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+              <div className={`border px-4 py-3 rounded-xl text-sm ${isDarkMode ? 'bg-red-900/20 border-red-800 text-red-300' : 'bg-red-50 border-red-200 text-red-700'}`}>
                 {error}
               </div>
             )}
@@ -599,7 +612,7 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
             <button 
               type="submit"
               disabled={loading}
-              className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white font-bold py-3 sm:py-4 rounded-xl transition-colors text-sm sm:text-lg"
+              className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 dark:bg-primary-500 dark:hover:bg-primary-600 dark:disabled:bg-primary-700 text-white font-bold py-3 sm:py-4 rounded-xl transition-colors text-sm sm:text-lg"
             >
               {loading ? 'RANDEVU OLUŞTURULUYOR...' : 'RANDEVU AL'}
             </button>
@@ -607,8 +620,8 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
         </div>
 
         {/* Staff Section */}
-        <div className="bg-white rounded-xl shadow-md p-3 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Çalışmalarımız</h2>
+        <div className={`${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'} rounded-xl shadow-md p-3 sm:p-6`}>
+          <h2 className={`text-lg sm:text-xl font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-3 sm:mb-4`}>Çalışmalarımız</h2>
           
           {/* Modern Slider Preview */}
           <div className="mb-3 sm:mb-4">
@@ -814,18 +827,18 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
           
           {/* Modal */}
           <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full mx-4">
+          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-2xl max-w-sm w-full mx-4`}>
             <div className="p-6 text-center">
               {/* Success Icon */}
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className={`w-12 h-12 ${isDarkMode ? 'bg-green-900/30' : 'bg-green-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                <svg className={`w-6 h-6 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
               
               {/* Success Message */}
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Randevu Onaylandı!</h3>
-              <p className="text-sm text-gray-600 mb-4">Randevu kodunuz: <span className="font-bold text-primary-600">{appointmentCode}</span></p>
+              <h3 className={`text-lg font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>Randevu Onaylandı!</h3>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-4`}>Randevu kodunuz: <span className={`font-bold ${isDarkMode ? 'text-primary-400' : 'text-primary-600'}`}>{appointmentCode}</span></p>
               
               {/* Action Buttons */}
               <div className="flex gap-3">
@@ -870,7 +883,11 @@ export default function ClientAppointmentPage({ staff, sliderImages }: ClientApp
                   setShowSuccessModal(false)
                   setIsCopied(false)
                 }}
-                className="w-full text-gray-500 text-sm mt-3 hover:text-gray-700 transition-colors"
+                className={`w-full text-sm mt-3 transition-colors ${
+                  isDarkMode 
+                    ? 'text-gray-400 hover:text-gray-200' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
               >
                 Kapat
               </button>

@@ -1,4 +1,3 @@
-import React from "react";
 import type { Viewport, Metadata } from "next";
 import { Inter, Grenze_Gotisch, Gluten, Fredoka, Newsreader, Playwrite_US_Modern, Phudu, Playfair, Michroma, Advent_Pro } from "next/font/google";
 import { prisma } from "@/lib/prisma";
@@ -167,10 +166,6 @@ export default async function RootLayout({
   // Dark mode kontrol - admin panelden ayarlanabilir
   const isDarkMode = Boolean((siteSettings as { darkMode?: boolean })?.darkMode)
   
-  // Debug log - geçici
-  console.log('siteSettings?.darkMode:', (siteSettings as { darkMode?: boolean })?.darkMode)
-  console.log('isDarkMode:', isDarkMode)
-  
   const themeStyles = generateColorScale(siteSettings?.themeColor || '#3B82F6', isDarkMode)
   
   // Font class mapping - admin sayfaları için özel kontrol
@@ -202,7 +197,7 @@ export default async function RootLayout({
       <body
         className={`${inter.variable} ${gluten.variable} ${fredoka.variable} ${grenze_gotisch.variable} ${newsreader.variable} ${playwrite_us_modern.variable} ${phudu.variable} ${playfair.variable} ${michroma.variable} ${advent_pro.variable} ${selectedFontClass}`}
       >
-        <ThemeProvider>
+        <ThemeProvider >
           {children}
         </ThemeProvider>
       </body>

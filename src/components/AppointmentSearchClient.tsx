@@ -54,6 +54,9 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
   const [success, setSuccess] = useState('')
   const [cancelLoading, setCancelLoading] = useState(false)
 
+  // Dark mode kontrolü
+  const isDarkMode = Boolean(siteSettings?.darkMode)
+
   const searchAppointment = useCallback(async (code?: string) => {
     const searchValue = code || searchCode
     if (!searchValue.trim()) {
@@ -186,15 +189,15 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
   }
 
   return (
-    <div className="min-h-screen bg-radial-[at_50%_0%] from-primary-300 via-primary-200 to-primary-100">
+    <div className={`min-h-screen bg-radial-[at_50%_0%] ${isDarkMode ? 'from-gray-900 via-gray-800 to-gray-900' : 'from-primary-300 via-primary-200 to-primary-50'}`}>
       {/* Minimal Header - Exactly like the image */}
-      <header className="bg-primary-50/75 backdrop-blur-md shadow-sm border-b border-primary-100/20 bg-primary-50 sticky top-0 z-50 shadow-xl">
+      <header className="bg-primary-50/75 backdrop-blur-md border-b border-primary-100/20 sticky top-0 z-50 shadow-xl">
         <div className="mx-auto px-4 py-4 flex items-center justify-between" style={{ maxWidth: '416px' }}>
           <Link
             href="/"
             className="inline-block"
           >
-            <ArrowLeft className="w-6 h-6 text-primary-600 hover:text-primary-700" />
+            <ArrowLeft className="w-6 h-6 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300" />
           </Link>
         </div>
       </header>
@@ -203,14 +206,14 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
       <main className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '416px' }}>
         {/* Success Message */}
         {success && (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-2 shadow-sm">
+          <div className={`${isDarkMode ? 'bg-green-900/20 border-green-800 text-green-300' : 'bg-green-50 border-green-200 text-green-700'} px-4 py-3 rounded-xl flex items-center gap-2 shadow-sm`}>
             <CheckCircle className="w-5 h-5" />
             {success}
           </div>
         )}
 
         {/* Search Form - Ana sayfa tasarım stili */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-primary-100/50 overflow-hidden">
+        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl border border-primary-100/50 ${isDarkMode ? 'border-gray-700/50' : ''} overflow-hidden`}>
           <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <Search className="w-6 h-6 text-white" />
@@ -230,12 +233,12 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
                   type="text"
                   value={searchCode}
                   onChange={(e) => setSearchCode(e.target.value)}
-                  className="w-full px-6 py-4 border-2 border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-center text-xl font-mono bg-primary-50/50"
+                  className={`w-full px-6 py-4 border-2 ${isDarkMode ? 'border-gray-600 bg-gray-700 text-gray-200' : 'border-primary-200 bg-white'} rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-center text-xl font-mono`}
                   placeholder="123456"
                   maxLength={6}
                 />
                 {error && (
-                  <p className="text-red-500 text-sm mt-3 text-center bg-red-50 py-2 px-4 rounded-lg">{error}</p>
+                  <p className={`${isDarkMode ? 'text-red-400 bg-red-900/20' : 'text-red-500 bg-red-50'} text-sm mt-3 text-center py-2 px-4 rounded-lg`}>{error}</p>
                 )}
               </div>
               
@@ -262,7 +265,7 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
 
         {/* Appointment Details - Ana sayfa tasarım stili */}
         {appointment && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-primary-100/50 overflow-hidden">
+          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl border border-primary-100/50 ${isDarkMode ? 'border-gray-700/50' : ''} overflow-hidden`}>
             <div className="bg-gradient-to-r from-green-600 to-green-700 p-6">
               <div className="flex items-center gap-3 mb-2">
                 <CheckCircle className="w-6 h-6 text-white" />
@@ -270,15 +273,15 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
                   Randevu Bilgileri
                 </h3>
               </div>
-              <p className="text-green-100 text-sm">
+              <p className="text-green-100 dark:text-green-200 text-sm">
                 Kod: <span className="font-mono font-bold">{appointment.code}</span>
               </p>
             </div>
             
             <div className="p-6 space-y-4">
               {/* Status */}
-              <div className="flex items-center justify-between p-4 bg-primary-50/50 rounded-xl border border-primary-100">
-                <span className="text-sm font-semibold text-primary-700">Durum</span>
+              <div className={`flex items-center justify-between p-4 ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-primary-100'} rounded-xl border`}>
+                <span className={`text-sm font-semibold ${isDarkMode ? 'text-primary-300' : 'text-primary-700'}`}>Durum</span>
                 <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold ${getStatusColor(appointment.status)}`}>
                   {getStatusIcon(appointment.status)}
                   {getStatusText(appointment.status)}
@@ -287,63 +290,63 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
 
               {/* Customer Info */}
               <div className="space-y-3">
-                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
-                  <div className="p-2 bg-primary-100 rounded-lg">
-                    <User className="w-5 h-5 text-primary-600" />
+                <div className={`flex items-center gap-4 p-4 ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-primary-100'} rounded-xl border`}>
+                  <div className={`p-2 ${isDarkMode ? 'bg-primary-900/50' : 'bg-primary-100'} rounded-lg`}>
+                    <User className={`w-5 h-5 ${isDarkMode ? 'text-primary-400' : 'text-primary-600'}`} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-primary-700">Randevu Alan</p>
-                    <p className="text-primary-900 font-medium">{appointment.customerName}</p>
+                    <p className={`text-sm font-semibold ${isDarkMode ? 'text-primary-300' : 'text-primary-700'}`}>Randevu Alan</p>
+                    <p className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-primary-900'}`}>{appointment.customerName}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
-                  <div className="p-2 bg-primary-100 rounded-lg">
-                    <Phone className="w-5 h-5 text-primary-600" />
+                <div className={`flex items-center gap-4 p-4 ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-primary-100'} rounded-xl border`}>
+                  <div className={`p-2 ${isDarkMode ? 'bg-primary-900/50' : 'bg-primary-100'} rounded-lg`}>
+                    <Phone className={`w-5 h-5 ${isDarkMode ? 'text-primary-400' : 'text-primary-600'}`} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-primary-700">Telefon</p>
-                    <p className="text-primary-900 font-medium">{appointment.customerPhone}</p>
+                    <p className={`text-sm font-semibold ${isDarkMode ? 'text-primary-300' : 'text-primary-700'}`}>Telefon</p>
+                    <p className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-primary-900'}`}>{appointment.customerPhone}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
-                  <div className="p-2 bg-primary-100 rounded-lg">
-                    <User className="w-5 h-5 text-primary-600" />
+                <div className={`flex items-center gap-4 p-4 ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-primary-100'} rounded-xl border`}>
+                  <div className={`p-2 ${isDarkMode ? 'bg-primary-900/50' : 'bg-primary-100'} rounded-lg`}>
+                    <User className={`w-5 h-5 ${isDarkMode ? 'text-primary-400' : 'text-primary-600'}`} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-primary-700">Personel</p>
-                    <p className="text-primary-900 font-medium">{appointment.staff.name}</p>
+                    <p className={`text-sm font-semibold ${isDarkMode ? 'text-primary-300' : 'text-primary-700'}`}>Personel</p>
+                    <p className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-primary-900'}`}>{appointment.staff.name}</p>
                     {appointment.staff.title && (
-                      <p className="text-sm text-primary-600">{appointment.staff.title}</p>
+                      <p className={`text-sm ${isDarkMode ? 'text-primary-400' : 'text-primary-600'}`}>{appointment.staff.title}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
-                  <div className="p-2 bg-primary-100 rounded-lg">
-                    <Calendar className="w-5 h-5 text-primary-600" />
+                <div className={`flex items-center gap-4 p-4 ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-primary-100'} rounded-xl border`}>
+                  <div className={`p-2 ${isDarkMode ? 'bg-primary-900/50' : 'bg-primary-100'} rounded-lg`}>
+                    <Calendar className={`w-5 h-5 ${isDarkMode ? 'text-primary-400' : 'text-primary-600'}`} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-primary-700">Tarih</p>
-                    <p className="text-primary-900 font-medium">{formatDate(appointment.date)}</p>
+                    <p className={`text-sm font-semibold ${isDarkMode ? 'text-primary-300' : 'text-primary-700'}`}>Tarih</p>
+                    <p className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-primary-900'}`}>{formatDate(appointment.date)}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
-                  <div className="p-2 bg-primary-100 rounded-lg">
-                    <Clock className="w-5 h-5 text-primary-600" />
+                <div className={`flex items-center gap-4 p-4 ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-primary-100'} rounded-xl border`}>
+                  <div className={`p-2 ${isDarkMode ? 'bg-primary-900/50' : 'bg-primary-100'} rounded-lg`}>
+                    <Clock className={`w-5 h-5 ${isDarkMode ? 'text-primary-400' : 'text-primary-600'}`} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-primary-700">Saat</p>
-                    <p className="text-primary-900 font-medium">{appointment.time}</p>
+                    <p className={`text-sm font-semibold ${isDarkMode ? 'text-primary-300' : 'text-primary-700'}`}>Saat</p>
+                    <p className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-primary-900'}`}>{appointment.time}</p>
                   </div>
                 </div>
 
                 {appointment.notes && (
-                  <div className="p-4 bg-primary-50/50 rounded-xl border border-primary-100">
-                    <p className="text-sm font-semibold text-primary-700 mb-2">Notlar</p>
-                    <p className="text-primary-900">{appointment.notes}</p>
+                  <div className={`p-4 ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-primary-100'} rounded-xl border`}>
+                    <p className={`text-sm font-semibold ${isDarkMode ? 'text-primary-300' : 'text-primary-700'} mb-2`}>Notlar</p>
+                    <p className={`${isDarkMode ? 'text-gray-200' : 'text-primary-900'}`}>{appointment.notes}</p>
                   </div>
                 )}
               </div>
@@ -353,7 +356,11 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
                 <button
                   onClick={cancelAppointment}
                   disabled={cancelLoading}
-                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 mt-6"
+                  className={`w-full font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 mt-6 ${
+                    isDarkMode 
+                      ? 'bg-red-500 hover:bg-red-600 disabled:bg-red-700' 
+                      : 'bg-red-600 hover:bg-red-700 disabled:bg-red-400'
+                  } text-white`}
                 >
                   {cancelLoading ? (
                     <>
@@ -371,36 +378,36 @@ export default function AppointmentSearchClient({ siteSettings }: { siteSettings
             </div>
           </div>
         )}        {/* Info - Ana sayfa tasarım stili */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-primary-100/50 p-6">
+        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl border border-primary-100/50 ${isDarkMode ? 'border-gray-700/50' : ''} p-6`}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary-100 rounded-lg">
-              <AlertCircle className="w-5 h-5 text-primary-600" />
+            <div className={`p-2 ${isDarkMode ? 'bg-primary-900/50' : 'bg-primary-100'} rounded-lg`}>
+              <AlertCircle className={`w-5 h-5 ${isDarkMode ? 'text-primary-400' : 'text-primary-600'}`} />
             </div>
-            <h4 className="font-bold text-primary-800 text-lg">Önemli Bilgiler</h4>
+            <h4 className={`font-bold ${isDarkMode ? 'text-primary-200' : 'text-primary-800'} text-lg`}>Önemli Bilgiler</h4>
           </div>
-          <ul className="text-sm text-primary-700 space-y-2">
+          <ul className={`text-sm ${isDarkMode ? 'text-primary-300' : 'text-primary-700'} space-y-2`}>
             <li className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 bg-primary-400 rounded-full mt-2 flex-shrink-0"></span>
+              <span className={`w-1.5 h-1.5 ${isDarkMode ? 'bg-primary-500' : 'bg-primary-400'} rounded-full mt-2 flex-shrink-0`}></span>
               Randevu kodunuzu güvenli bir yerde saklayınız.
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 bg-primary-400 rounded-full mt-2 flex-shrink-0"></span>
+              <span className={`w-1.5 h-1.5 ${isDarkMode ? 'bg-primary-500' : 'bg-primary-400'} rounded-full mt-2 flex-shrink-0`}></span>
               Sadece bekleyen randevular iptal edilebilir.
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 bg-primary-400 rounded-full mt-2 flex-shrink-0"></span>
+              <span className={`w-1.5 h-1.5 ${isDarkMode ? 'bg-primary-500' : 'bg-primary-400'} rounded-full mt-2 flex-shrink-0`}></span>
               Onaylanan randevular için iş yerini arayınız.
             </li>
           </ul>
           {siteSettings?.businessNumber && (
-            <div className="mt-4 pt-4 border-t border-primary-200">
-              <div className="flex items-center gap-3 p-3 bg-primary-50 rounded-xl">
-                <div className="p-2 bg-primary-100 rounded-lg">
-                  <Phone className="w-4 h-4 text-primary-600" />
+            <div className={`mt-4 pt-4 border-t ${isDarkMode ? 'border-primary-700' : 'border-primary-200'}`}>
+              <div className={`flex items-center gap-3 p-3 ${isDarkMode ? 'bg-gray-700' : 'bg-white'} rounded-xl`}>
+                <div className={`p-2 ${isDarkMode ? 'bg-primary-900/50' : 'bg-primary-100'} rounded-lg`}>
+                  <Phone className={`w-4 h-4 ${isDarkMode ? 'text-primary-400' : 'text-primary-600'}`} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-primary-700">İş Yeri Numarası</p>
-                  <p className="text-primary-900 font-mono font-bold">{siteSettings.businessNumber}</p>
+                  <p className={`text-sm font-semibold ${isDarkMode ? 'text-primary-300' : 'text-primary-700'}`}>İş Yeri Numarası</p>
+                  <p className={`${isDarkMode ? 'text-gray-200' : 'text-primary-900'} font-mono font-bold`}>{siteSettings.businessNumber}</p>
                 </div>
               </div>
             </div>

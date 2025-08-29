@@ -9,7 +9,7 @@ export default async function AppointmentSearchPage() {
   const siteSettings = await prisma.siteSettings.findFirst()
 
   return (
-    <div className="min-h-screen bg-primary-min-h-screen bg-radial-[at_50%_0%] from-primary-300 via-primary-200 to-primary-50">
+    <div className="min-h-screen bg-radial-[at_50%_0%] from-primary-300 via-primary-200 to-primary-50">
       <AppointmentSearchClient siteSettings={siteSettings} />
       
       {/* Add ViewTracker for analytics */}
