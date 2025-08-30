@@ -705,7 +705,7 @@ export default function ClientAppointmentPage({ staff, sliderImages, siteSetting
           <div 
             className="fixed inset-0 z-50"
             style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)'
             }}
