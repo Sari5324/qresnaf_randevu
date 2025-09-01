@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendSms } from '../send-sms/route'
 
 // Create appointment
 export async function POST(request: NextRequest) {
@@ -148,6 +149,19 @@ export async function POST(request: NextRequest) {
         }
       }
     })
+
+    // SMS gönder (opsiyonel - hata olsa bile randevu oluşturulur)
+    try {
+      const smsResult = await sendSms(cleanPhone, appointment.code, customerName)
+      if (smsResult.success) {
+        console.log('SMS başarıyla gönderildi:', smsResult.message)
+      } else {
+        console.error('SMS gönderilemedi:', smsResult.message)
+      }
+    } catch (smsError) {
+      console.error('SMS gönderme hatası:', smsError)
+      // SMS hatası randevu oluşturma işlemini engellemez
+    }
 
     return NextResponse.json(
       { 

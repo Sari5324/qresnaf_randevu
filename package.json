@@ -10,6 +10,7 @@
     "analyze": "cross-env ANALYZE=true npm run build"
   },
   "dependencies": {
+    "@netgsm/sms": "^1.1.10",
     "@prisma/client": "^6.12.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/leaflet": "^1.9.20",

@@ -1,6 +1,7 @@
-import { cookies } from 'next/headers'
-import { parseSessionToken } from '@/lib/session'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import AdminNav from '@/components/AdminNav'
 import AdminFoot from '@/components/AdminFoot'
 
@@ -12,24 +13,61 @@ interface AdminLayoutProps {
   className?: string
 }
 
-export default async function AdminLayout({ 
+export default function AdminLayout({ 
   children, 
   title, 
   description,
   maxWidth = '4xl',
   className = 'min-h-screen bg-gray-50'
 }: AdminLayoutProps) {
-  // Get session
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('session')?.value
-  
-  if (!sessionCookie) {
-    redirect('/admin/login')
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/check', {
+          method: 'GET',
+          credentials: 'include'
+        })
+        
+        if (!response.ok) {
+          router.push('/admin/login')
+          return
+        }
+        
+        const data = await response.json()
+        if (!data.authenticated || data.user?.role !== 'ADMIN') {
+          router.push('/admin/login')
+          return
+        }
+        
+        setIsAuthenticated(true)
+      } catch (error) {
+        console.error('Auth check failed:', error)
+        router.push('/admin/login')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    checkAuth()
+  }, [router])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Yükleniyor...</p>
+        </div>
+      </div>
+    )
   }
 
-  const session = parseSessionToken(sessionCookie)
-  if (!session || session.role !== 'ADMIN') {
-    redirect('/admin/login')
+  if (!isAuthenticated) {
+    return null
   }
 
   const maxWidthClasses = {

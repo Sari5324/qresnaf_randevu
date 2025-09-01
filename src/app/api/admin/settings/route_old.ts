@@ -47,11 +47,26 @@ export async function PUT(request: NextRequest) {
 
     const { companyName, description, themeColor, themeFont, companyLogo, darkMode, businessNumber, netgsmUsername, netgsmPassword, netgsmEnabled } = await request.json()
 
-    // Get existing settings first
+    // Get existing settings first to check what we're updating
     const existingSettings = await prisma.siteSettings.findFirst()
 
-    // Validation - Only validate companyName if it's being updated
-    if (companyName !== undefined) {
+    // Validation - Only validate companyName if it's being updated AND we're not just updating Netgsm settings
+    const isNetgsmOnlyUpdate = (
+      netgsmUsername !== undefined || 
+      netgsmPassword !== undefined || 
+      netgsmEnabled !== undefined
+    ) && (
+      companyName === undefined && 
+      description === undefined && 
+      themeColor === undefined && 
+      themeFont === undefined && 
+      companyLogo === undefined && 
+      darkMode === undefined && 
+      businessNumber === undefined
+    )
+
+    // If updating companyName or this is not a Netgsm-only update, validate companyName
+    if (!isNetgsmOnlyUpdate && companyName !== undefined) {
       if (!companyName || companyName.trim().length === 0) {
         return NextResponse.json(
           { errors: { companyName: 'Şirket adı gereklidir' } },
@@ -65,6 +80,14 @@ export async function PUT(request: NextRequest) {
           { status: 400 }
         )
       }
+    }
+
+    // If this is a Netgsm-only update and no existing settings, require companyName
+    if (isNetgsmOnlyUpdate && !existingSettings) {
+      return NextResponse.json(
+        { error: 'Site ayarları henüz oluşturulmamış. Önce genel ayarları yapılandırın.' },
+        { status: 400 }
+      )
     }
 
     if (description && description.length > 500) {
@@ -92,6 +115,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    // Get existing settings or create if none exist
     let updatedSettings
     if (existingSettings) {
       // Update existing settings
@@ -113,17 +137,10 @@ export async function PUT(request: NextRequest) {
         data: updateData
       })
     } else {
-      // Create new settings - require companyName for new records
-      if (!companyName || companyName.trim().length === 0) {
-        return NextResponse.json(
-          { error: 'Yeni ayar oluştururken şirket adı gereklidir' },
-          { status: 400 }
-        )
-      }
-
+      // Create new settings
       updatedSettings = await prisma.siteSettings.create({
         data: {
-          companyName: companyName.trim(),
+          companyName: companyName?.trim() || 'Şirket Adı',
           description: description?.trim() || null,
           themeColor: themeColor || '#3B82F6',
           themeFont: themeFont || 'inter',
@@ -144,6 +161,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(updatedSettings)
   } catch (error) {
     console.error('Settings PUT error:', error)
-    return NextResponse.json({ error: 'Sunucu hatası: ' + error }, { status: 500 })
+    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 })
   }
 }

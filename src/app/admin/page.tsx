@@ -5,7 +5,7 @@ import AdminNav from '../../components/AdminNav'
 import AdminFoot from '../../components/AdminFoot'
 import Link from 'next/link'
 import { prisma } from '../../lib/prisma'
-import { Settings, Calendar, UserCheck, Images } from 'lucide-react'
+import { Settings, Calendar, UserCheck, Images, Smartphone } from 'lucide-react'
 
 export default async function AdminDashboard() {
   // Get session
@@ -74,6 +74,19 @@ export default async function AdminDashboard() {
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">Slider Görselleri</h3>
                     
                     <Link href="/admin/slider" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
+                        Görüntüle
+                    </Link>
+                </div>
+
+                <div className="card bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-orange-100 rounded-lg">
+                            <Smartphone className="w-6 h-6 text-orange-600"/>
+                        </div>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">SMS Ayarları</h3>
+                    
+                    <Link href="/admin/netgsm" className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition-colors block text-center">
                         Görüntüle
                     </Link>
                 </div>

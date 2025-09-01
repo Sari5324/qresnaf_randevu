@@ -88,6 +88,12 @@ model SiteSettings {
   themeColor  String   @default("#3B82F6")
   themeFont   String   @default("inter")
   darkMode    Boolean  @default(false)
+  
+  // Netgsm SMS Settings
+  netgsmUsername String?
+  netgsmPassword String?
+  netgsmEnabled  Boolean @default(false)
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
