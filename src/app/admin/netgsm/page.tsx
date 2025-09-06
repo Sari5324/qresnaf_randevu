@@ -77,20 +77,6 @@ export default function NetgsmSettingsPage() {
     window.open('https://portal.netgsm.com.tr/', '_blank')
   }
 
-  const openNetgsmApiDocs = () => {
-    window.open('https://www.netgsm.com.tr/dokuman/', '_blank')
-  }
-
-  if (loading) {
-    return (
-      <AdminLayout title="Netgsm SMS Ayarları">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
-      </AdminLayout>
-    )
-  }
-
   return (
     <AdminLayout title="Netgsm SMS Ayarları">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -98,8 +84,8 @@ export default function NetgsmSettingsPage() {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="bg-blue-100 p-3 rounded-lg">
-              <Smartphone className="h-6 w-6 text-blue-600" />
+            <div className="bg-orange-100 p-3 rounded-lg">
+              <Smartphone className="h-6 w-6 text-orange-600" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Netgsm SMS Entegrasyonu</h1>
@@ -109,10 +95,10 @@ export default function NetgsmSettingsPage() {
         </div>
 
         {/* Netgsm Panel Access */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm p-6 border border-blue-200">
+        <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg shadow-sm p-6 border border-orange-200">
           <div className="flex items-start gap-4">
-            <div className="bg-blue-100 p-3 rounded-lg">
-              <ExternalLink className="h-6 w-6 text-blue-600" />
+            <div className="bg-orange-100 p-3 rounded-lg">
+              <ExternalLink className="h-6 w-6 text-orange-600" />
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Netgsm Panel Erişimi</h2>
@@ -123,19 +109,10 @@ export default function NetgsmSettingsPage() {
               <div className="space-y-3">
                 <button
                   onClick={openNetgsmPanel}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
                 >
                   <ExternalLink className="h-5 w-5" />
                   Netgsm Paneline Git
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-                
-                <button
-                  onClick={openNetgsmApiDocs}
-                  className="flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
-                >
-                  <FileText className="h-5 w-5" />
-                  API Dokümantasyonu
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -152,7 +129,7 @@ export default function NetgsmSettingsPage() {
           
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">1</div>
+              <div className="bg-orange-100 text-orange-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">1</div>
               <div>
                 <h4 className="font-medium text-gray-900">Netgsm Hesabınıza Giriş Yapın</h4>
                 <p className="text-gray-600">Yukarıdaki "Netgsm Paneline Git" butonuna tıklayarak hesabınıza giriş yapın</p>
@@ -160,7 +137,7 @@ export default function NetgsmSettingsPage() {
             </div>
             
             <div className="flex items-start gap-3">
-              <div className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">2</div>
+              <div className="bg-orange-100 text-orange-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">2</div>
               <div>
                 <h4 className="font-medium text-gray-900">API Erişimini Kontrol Edin</h4>
                 <p className="text-gray-600">Panel → Ayarlar → API Erişimi bölümünden SMS API'nin aktif olduğunu kontrol edin</p>
@@ -168,7 +145,7 @@ export default function NetgsmSettingsPage() {
             </div>
             
             <div className="flex items-start gap-3">
-              <div className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">3</div>
+              <div className="bg-orange-100 text-orange-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">3</div>
               <div>
                 <h4 className="font-medium text-gray-900">API Bilgilerinizi Alın</h4>
                 <p className="text-gray-600">Kullanıcı adı ve şifrenizi (veya API key) not alın</p>
@@ -176,7 +153,7 @@ export default function NetgsmSettingsPage() {
             </div>
             
             <div className="flex items-start gap-3">
-              <div className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">4</div>
+              <div className="bg-orange-100 text-orange-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">4</div>
               <div>
                 <h4 className="font-medium text-gray-900">Aşağıdaki Formu Doldurun</h4>
                 <p className="text-gray-600">Netgsm'den aldığınız bilgileri aşağıya girin ve kaydedin</p>
@@ -187,7 +164,7 @@ export default function NetgsmSettingsPage() {
 
         {/* Basic Settings Form */}
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Temel SMS Ayarları</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">SMS Ayarları</h3>
           
           {message && (
             <div className={`mb-4 p-4 rounded-lg flex items-center gap-2 ${
@@ -212,7 +189,7 @@ export default function NetgsmSettingsPage() {
                 type="text"
                 value={settings.netgsmUsername || ''}
                 onChange={(e) => setSettings(prev => ({ ...prev, netgsmUsername: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 placeholder="Netgsm kullanıcı adınız"
               />
             </div>
@@ -225,20 +202,20 @@ export default function NetgsmSettingsPage() {
                 type="password"
                 value={settings.netgsmPassword || ''}
                 onChange={(e) => setSettings(prev => ({ ...prev, netgsmPassword: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 placeholder="Netgsm şifreniz"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Firma Adı
+                Firma Adı (SMS Başlığı)
               </label>
               <input
                 type="text"
                 value={settings.companyName || ''}
                 onChange={(e) => setSettings(prev => ({ ...prev, companyName: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 placeholder="SMS'lerde görünecek firma adı"
               />
             </div>
@@ -248,7 +225,7 @@ export default function NetgsmSettingsPage() {
                 type="checkbox"
                 checked={settings.netgsmEnabled}
                 onChange={(e) => setSettings(prev => ({ ...prev, netgsmEnabled: e.target.checked }))}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
               />
               <label className="ml-2 block text-sm text-gray-900">
                 SMS gönderimini etkinleştir
@@ -256,11 +233,11 @@ export default function NetgsmSettingsPage() {
             </div>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 flex gap-3">
             <button
               onClick={handleSaveBasicSettings}
               disabled={saving}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {saving ? (
                 <>
@@ -274,6 +251,15 @@ export default function NetgsmSettingsPage() {
                 </>
               )}
             </button>
+            
+            <a
+              href="/sms-test"
+              target="_blank"
+              className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 flex items-center gap-2"
+            >
+              <Smartphone className="h-4 w-4" />
+              SMS Test Et
+            </a>
           </div>
         </div>
 
